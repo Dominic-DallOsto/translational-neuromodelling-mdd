@@ -10,9 +10,10 @@ if __name__ == "__main__":
 		subject_data_dir = f'{dataset_location}/data'
 		print(f'Reading subject data from {subject_data_dir}.')
 
-		subjects = os.listdir(subject_data_dir)
+		subjects = [directory for directory in os.listdir(subject_data_dir) if directory.startswith('sub-')]
 
 		for subject in subjects:
+			print(f'Subject directory: {subject}')
 			subject_dir = f'{subject_data_dir}/{subject}/rsfmri'
 			for file in os.listdir(subject_dir):
 				if file.startswith('vol_') and not file.endswith('.nii'):
