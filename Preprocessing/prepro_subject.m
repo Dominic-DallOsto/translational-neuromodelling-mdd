@@ -4,8 +4,9 @@ function matlabbatch = prepro_subject(datasetDir, subject, run)
 % Performs / sets up a preprocessing pipeline.
 %
 % Inputs:
-%       dataDir: Path to subject data folder (must contain structural/ and
+%       dataDir:  Path to subject data folder (must contain structural/ and
 %                 functional/ subfolders)
+%       subject:  Patient number (int)
 %       run:      if 0 -> just create struct [default]
 %                 if 1 -> run directly
 %                 if 2 -> run interactively (open Batch editor with analysis)
