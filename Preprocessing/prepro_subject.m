@@ -84,7 +84,7 @@ else
 	throw(MLException('DataPreProcessing:GetSliceAcquisitionOrder',sprintf('Slice Acquisition Order %s not recognised.',scan_properties.SliceAcquisitionOrder)))
 end
 matlabbatch{SLICE_TIMING}.spm.temporal.st.refslice = numberSlices/2; % we normally use the middle slice as the reference
-matlabbatch{SLICE_TIMING}.spm.temporal.st.prefix = 'slicetimingcorrected';
+matlabbatch{SLICE_TIMING}.spm.temporal.st.prefix = 'slicecorr_';
 
 %--------------------------------------------------------------------------
 % Realign: motion correction and align two fMRI runs
@@ -100,7 +100,7 @@ matlabbatch{REALIGN}.spm.spatial.realign.estwrite.roptions.which = [0 1];
 matlabbatch{REALIGN}.spm.spatial.realign.estwrite.roptions.interp = 4;
 matlabbatch{REALIGN}.spm.spatial.realign.estwrite.roptions.wrap = [0 0 0];
 matlabbatch{REALIGN}.spm.spatial.realign.estwrite.roptions.mask = 1;
-matlabbatch{REALIGN}.spm.spatial.realign.estwrite.roptions.prefix = 'realigned';
+matlabbatch{REALIGN}.spm.spatial.realign.estwrite.roptions.prefix = 'realign_';
 
 %--------------------------------------------------------------------------
 % Normalisation (skstruct -> standard)
@@ -159,7 +159,7 @@ matlabbatch{WRITE_FUNCTIONAL}.spm.spatial.normalise.write.woptions.bb = ...
     78 76 85];
 matlabbatch{WRITE_FUNCTIONAL}.spm.spatial.normalise.write.woptions.vox = [2 2 2];
 matlabbatch{WRITE_FUNCTIONAL}.spm.spatial.normalise.write.woptions.interp = 4;
-matlabbatch{WRITE_FUNCTIONAL}.spm.spatial.normalise.write.woptions.prefix = 'normalised';
+matlabbatch{WRITE_FUNCTIONAL}.spm.spatial.normalise.write.woptions.prefix = 'norm_';
 
 %--------------------------------------------------------------------------
 % Smooth functionals
@@ -167,7 +167,7 @@ matlabbatch{SMOOTHING}.spm.spatial.smooth.data(1) = cfg_dep('Normalise: Write: N
 matlabbatch{SMOOTHING}.spm.spatial.smooth.fwhm = [6 6 6]; % use 6 mm kernel like the paper
 matlabbatch{SMOOTHING}.spm.spatial.smooth.dtype = 0;
 matlabbatch{SMOOTHING}.spm.spatial.smooth.im = 0;
-matlabbatch{SMOOTHING}.spm.spatial.smooth.prefix = 'smoothed';
+matlabbatch{SMOOTHING}.spm.spatial.smooth.prefix = 'smooth_';
 
 %--------------------------------------------------------------------------
 % Write [bias corrected] structural to standard space
@@ -178,7 +178,7 @@ matlabbatch{WRITE_STRUCTURAL}.spm.spatial.normalise.write.woptions.bb = ...
     78 76 85];
 matlabbatch{WRITE_STRUCTURAL}.spm.spatial.normalise.write.woptions.vox = [1 1 1];
 matlabbatch{WRITE_STRUCTURAL}.spm.spatial.normalise.write.woptions.interp = 4;
-matlabbatch{WRITE_STRUCTURAL}.spm.spatial.normalise.write.woptions.prefix = 'normalised';
+matlabbatch{WRITE_STRUCTURAL}.spm.spatial.normalise.write.woptions.prefix = 'norm_';
 %--------------------------------------------------------------------------
 
 if run == 2

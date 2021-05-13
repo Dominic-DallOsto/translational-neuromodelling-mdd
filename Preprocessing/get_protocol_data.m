@@ -6,4 +6,3 @@ function data = get_protocol_data(data_directory, N)
 	else
 		throw(MException('ProtocolReader:noSuchProtocol',sprintf('Tried to access protocol %d which does not exist.',N)))
 	end
-	
