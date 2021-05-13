@@ -8,3 +8,8 @@ To run the preprocessing:
 2. Change the file extensions on the rsfMRI scans to .nii (not clear why these aren't already like this...): `python Preprocessing/rename_nii_files.py <path-to-SBPBS_OPEN>`
 
 3. Run the MATLAB preprocessing script for a particular subject: `prepro_subject('path-to-SRPBS_OPEN', subject-number, 1)`
+
+## Useful links
+
+Some information about the scan protocols they used [here](https://bicr.atr.jp/wp-content/uploads/2018/08/UnifiedProtocol-1-1.pdf).
+

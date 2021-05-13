@@ -32,27 +32,34 @@ end
 % Check whether subfolders exist.
 struct_dir = fullfile(dataDir, 't1');
 if ~exist(struct_dir, 'dir')
-    error('Could not find structural/ subfolder');
+    error('Could not find t1/ subfolder');
 end
 func_dir = fullfile(dataDir, 'rsfmri');
 if ~exist(func_dir, 'dir')
-    error('Could not find functional/ subfolder');
+    error('Could not find rsfmri/ subfolder');
+end
+fmap_dir = fullfile(dataDir, 'fmap');
+if ~exist(fmap_dir, 'dir')
+    error('Could not find fmap/ subfolder');
 end
 
 % Find out where the Tissue Probability Maps (TPMs) of SPM are located
 % on your computer.
 tpm_dir = fullfile(fileparts(which('spm')), 'tpm');
+spm_fmap_dir = fullfile(fileparts(which('spm')), 'toolbox', 'FieldMap');
 
 matlabbatch = {};
 
 CONVERT_3D_4D = 1;
 SLICE_TIMING = 2;
 REALIGN = 3;
-NORMALISATION = 4;
-COREGISTRATION = 5;
-WRITE_FUNCTIONAL = 6;
-SMOOTHING = 7;
-WRITE_STRUCTURAL = 8;
+GET_FIELD_MAP = 4;
+APPLY_FIELD_MAP = 5;
+NORMALISATION = 6;
+COREGISTRATION = 7;
+WRITE_FUNCTIONAL = 8;
+SMOOTHING = 9;
+WRITE_STRUCTURAL = 10;
 
 scans = spm_select('FPList',func_dir,'^vol_.+');
 
@@ -85,7 +92,7 @@ else
 	throw(MLException('DataPreProcessing:GetSliceAcquisitionOrder',sprintf('Slice Acquisition Order %s not recognised.',scan_properties.SliceAcquisitionOrder)))
 end
 matlabbatch{SLICE_TIMING}.spm.temporal.st.refslice = numberSlices/2; % we normally use the middle slice as the reference
-matlabbatch{SLICE_TIMING}.spm.temporal.st.prefix = 'slicetimingcorrected';
+matlabbatch{SLICE_TIMING}.spm.temporal.st.prefix = 'slicecorr_';
 
 %--------------------------------------------------------------------------
 % Realign: motion correction and align two fMRI runs
@@ -101,7 +108,45 @@ matlabbatch{REALIGN}.spm.spatial.realign.estwrite.roptions.which = [0 1];
 matlabbatch{REALIGN}.spm.spatial.realign.estwrite.roptions.interp = 4;
 matlabbatch{REALIGN}.spm.spatial.realign.estwrite.roptions.wrap = [0 0 0];
 matlabbatch{REALIGN}.spm.spatial.realign.estwrite.roptions.mask = 1;
-matlabbatch{REALIGN}.spm.spatial.realign.estwrite.roptions.prefix = 'realigned';
+matlabbatch{REALIGN}.spm.spatial.realign.estwrite.roptions.prefix = 'realign_';
+
+%--------------------------------------------------------------------------
+% Field map correction: calculate voxel displacement map
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.data.presubphasemag.phase = {fullfile(fmap_dir, 'phase.nii')};
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.data.presubphasemag.magnitude = {fullfile(fmap_dir, 'data_0000.nii')};
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.et = [4.92 7.38]; % got these from the protocol pdf
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.maskbrain = 0; % don't mask the brain?
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.blipdir = -1; % left this at default
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.tert = 21.1; % left this at default
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.epifm = 0;
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.ajm = 0;
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.uflags.method = 'Mark3D';
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.uflags.fwhm = 10;
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.uflags.pad = 0;
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.uflags.ws = 1;
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.mflags.template = {fullfile(spm_fmap_dir, 'T1.nii')};
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.mflags.fwhm = 5;
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.mflags.nerode = 2;
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.mflags.ndilate = 4;
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.mflags.thresh = 0.5;
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.mflags.reg = 0.02;
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.session.epi(1) = {''}; % don't want to unwarp anything yet
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.matchvdm = 0;
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.sessname = 'session';
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.writeunwarped = 0;
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.anat = '';
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.matchanat = 0;
+
+%--------------------------------------------------------------------------
+% Field map correction: unwarp functional images
+matlabbatch{APPLY_FIELD_MAP}.spm.tools.fieldmap.applyvdm.data.scans(1) = cfg_dep('Realign: Estimate & Reslice: Realigned Images (Sess 1)', substruct('.','val', '{}',{REALIGN}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','sess', '()',{1}, '.','cfiles'));
+matlabbatch{APPLY_FIELD_MAP}.spm.tools.fieldmap.applyvdm.data.vdmfile(1) = cfg_dep('Calculate VDM: Voxel displacement map (Subj 1, Session 1)', substruct('.','val', '{}',{GET_FIELD_MAP}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('()',{1}, '.','vdmfile', '{}',{1}));
+matlabbatch{APPLY_FIELD_MAP}.spm.tools.fieldmap.applyvdm.roptions.pedir = 2;
+matlabbatch{APPLY_FIELD_MAP}.spm.tools.fieldmap.applyvdm.roptions.which = [2 1];
+matlabbatch{APPLY_FIELD_MAP}.spm.tools.fieldmap.applyvdm.roptions.rinterp = 4;
+matlabbatch{APPLY_FIELD_MAP}.spm.tools.fieldmap.applyvdm.roptions.wrap = [0 0 0];
+matlabbatch{APPLY_FIELD_MAP}.spm.tools.fieldmap.applyvdm.roptions.mask = 1;
+matlabbatch{APPLY_FIELD_MAP}.spm.tools.fieldmap.applyvdm.roptions.prefix = 'fmap_';
 
 %--------------------------------------------------------------------------
 % Normalisation (skstruct -> standard)
@@ -154,13 +199,13 @@ matlabbatch{COREGISTRATION}.spm.spatial.coreg.estimate.eoptions.fwhm = [7 7];
 %--------------------------------------------------------------------------
 % Write functionals to standard space
 matlabbatch{WRITE_FUNCTIONAL}.spm.spatial.normalise.write.subj.def(1) = cfg_dep('Segment: Forward Deformations', substruct('.','val', '{}',{NORMALISATION}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','fordef', '()',{':'}));
-matlabbatch{WRITE_FUNCTIONAL}.spm.spatial.normalise.write.subj.resample(1) = cfg_dep('Coregister: Estimate: Coregistered Images', substruct('.','val', '{}',{COREGISTRATION}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','cfiles'));
+matlabbatch{WRITE_FUNCTIONAL}.spm.spatial.normalise.write.subj.resample(1) = cfg_dep('Apply VDM : VDM corrected images (Sess 1)', substruct('.','val', '{}',{APPLY_FIELD_MAP}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','sess', '()',{1}, '.','rfiles'));
 matlabbatch{WRITE_FUNCTIONAL}.spm.spatial.normalise.write.woptions.bb = ...
     [-78 -112 -70
     78 76 85];
 matlabbatch{WRITE_FUNCTIONAL}.spm.spatial.normalise.write.woptions.vox = [2 2 2];
 matlabbatch{WRITE_FUNCTIONAL}.spm.spatial.normalise.write.woptions.interp = 4;
-matlabbatch{WRITE_FUNCTIONAL}.spm.spatial.normalise.write.woptions.prefix = 'normalised';
+matlabbatch{WRITE_FUNCTIONAL}.spm.spatial.normalise.write.woptions.prefix = 'norm_';
 
 %--------------------------------------------------------------------------
 % Smooth functionals
@@ -168,7 +213,7 @@ matlabbatch{SMOOTHING}.spm.spatial.smooth.data(1) = cfg_dep('Normalise: Write: N
 matlabbatch{SMOOTHING}.spm.spatial.smooth.fwhm = [6 6 6]; % use 6 mm kernel like the paper
 matlabbatch{SMOOTHING}.spm.spatial.smooth.dtype = 0;
 matlabbatch{SMOOTHING}.spm.spatial.smooth.im = 0;
-matlabbatch{SMOOTHING}.spm.spatial.smooth.prefix = 'smoothed';
+matlabbatch{SMOOTHING}.spm.spatial.smooth.prefix = 'smooth_';
 
 %--------------------------------------------------------------------------
 % Write [bias corrected] structural to standard space
@@ -179,7 +224,7 @@ matlabbatch{WRITE_STRUCTURAL}.spm.spatial.normalise.write.woptions.bb = ...
     78 76 85];
 matlabbatch{WRITE_STRUCTURAL}.spm.spatial.normalise.write.woptions.vox = [1 1 1];
 matlabbatch{WRITE_STRUCTURAL}.spm.spatial.normalise.write.woptions.interp = 4;
-matlabbatch{WRITE_STRUCTURAL}.spm.spatial.normalise.write.woptions.prefix = 'normalised';
+matlabbatch{WRITE_STRUCTURAL}.spm.spatial.normalise.write.woptions.prefix = 'norm_';
 %--------------------------------------------------------------------------
 
 if run == 2
