@@ -115,12 +115,9 @@ matlabbatch{REALIGN}.spm.spatial.realign.estwrite.roptions.prefix = 'realign_';
 if exist(fullfile(fmap_dir, 'phase.nii'),'file') == 2
 	field_map_phase = fullfile(fmap_dir, 'phase.nii');
 	field_map_magn = fullfile(fmap_dir, 'data_0000.nii');
-elseif exist(fullfile(fmap_dir, 'fieldmap212APs006a2001.nii'),'file') == 2
-	field_map_phase = fullfile(fmap_dir, 'fieldmap212APs006a2001.nii');
-	field_map_magn = fullfile(fmap_dir, 'fieldmap212APs005a1001_1.nii');
-elseif exist(fullfile(fmap_dir, 'fieldmap212PAs006a2001.nii'),'file') == 2
-	field_map_phase = fullfile(fmap_dir, 'fieldmap212PAs006a2001.nii');
-	field_map_magn = fullfile(fmap_dir, 'fieldmap212PAs005a1001_1.nii');
+else
+	field_map_phase = spm_select('FPList',fmap_dir,'^fieldmap.*[^_]..nii$');
+	field_map_magn = spm_select('FPList',fmap_dir,'^fieldmap.*_1.nii$');
 end
 matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.data.presubphasemag.phase = {field_map_phase};
 matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.data.presubphasemag.magnitude = {field_map_magn};
