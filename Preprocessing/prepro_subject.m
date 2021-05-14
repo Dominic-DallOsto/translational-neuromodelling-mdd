@@ -112,8 +112,18 @@ matlabbatch{REALIGN}.spm.spatial.realign.estwrite.roptions.prefix = 'realign_';
 
 %--------------------------------------------------------------------------
 % Field map correction: calculate voxel displacement map
-matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.data.presubphasemag.phase = {fullfile(fmap_dir, 'phase.nii')};
-matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.data.presubphasemag.magnitude = {fullfile(fmap_dir, 'data_0000.nii')};
+if exist(fullfile(fmap_dir, 'phase.nii'),'file') == 2
+	field_map_phase = fullfile(fmap_dir, 'phase.nii');
+	field_map_magn = fullfile(fmap_dir, 'data_0000.nii');
+elseif exist(fullfile(fmap_dir, 'fieldmap212APs006a2001.nii'),'file') == 2
+	field_map_phase = fullfile(fmap_dir, 'fieldmap212APs006a2001.nii');
+	field_map_magn = fullfile(fmap_dir, 'fieldmap212APs005a1001_1.nii');
+elseif exist(fullfile(fmap_dir, 'fieldmap212PAs006a2001.nii'),'file') == 2
+	field_map_phase = fullfile(fmap_dir, 'fieldmap212PAs006a2001.nii');
+	field_map_magn = fullfile(fmap_dir, 'fieldmap212PAs005a1001_1.nii');
+end
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.data.presubphasemag.phase = {field_map_phase};
+matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.data.presubphasemag.magnitude = {field_map_magn};
 matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.et = [4.92 7.38]; % got these from the protocol pdf
 matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.maskbrain = 0; % don't mask the brain?
 matlabbatch{GET_FIELD_MAP}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.blipdir = -1; % left this at default
