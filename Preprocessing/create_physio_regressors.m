@@ -73,13 +73,13 @@ matlabbatch{1}.spm.tools.physio.model.censor_unreliable_recording_intervals = fa
 matlabbatch{1}.spm.tools.physio.model.retroicor.no = struct([]);
 matlabbatch{1}.spm.tools.physio.model.rvt.no = struct([]);
 matlabbatch{1}.spm.tools.physio.model.hrv.no = struct([]);
-matlabbatch{1}.spm.tools.physio.model.noise_rois.yes.fmri_files = {fullfile(func_dir, 'smoothednormalisedslicetimingcorrectedvol.nii')}; % CHECK FILE
-matlabbatch{1}.spm.tools.physio.model.noise_rois.yes.roi_files = {fullfile(struct_dir, 'c2defaced_mprage.nii')};                         % CHECK FILE
+matlabbatch{1}.spm.tools.physio.model.noise_rois.yes.fmri_files = {fullfile(func_dir, 'smooth_norm_fmap_slicecorr_vol.nii')}; 
+matlabbatch{1}.spm.tools.physio.model.noise_rois.yes.roi_files = {fullfile(struct_dir, 'c2defaced_mprage.nii')};                         
 matlabbatch{1}.spm.tools.physio.model.noise_rois.yes.force_coregister = 'Yes';
 matlabbatch{1}.spm.tools.physio.model.noise_rois.yes.thresholds = 0.9;
 matlabbatch{1}.spm.tools.physio.model.noise_rois.yes.n_voxel_crop = 0;
 matlabbatch{1}.spm.tools.physio.model.noise_rois.yes.n_components = 1;
-matlabbatch{1}.spm.tools.physio.model.movement.yes.file_realignment_parameters = {fullfile(func_dir, 'rp_slicetimingcorrectedvol.txt')};     % CHECK FILE
+matlabbatch{1}.spm.tools.physio.model.movement.yes.file_realignment_parameters = {fullfile(func_dir, 'rp_slicecorr_vol.txt')};    
 matlabbatch{1}.spm.tools.physio.model.movement.yes.order = 6;
 matlabbatch{1}.spm.tools.physio.model.movement.yes.censoring_method = 'FD';
 matlabbatch{1}.spm.tools.physio.model.movement.yes.censoring_threshold = 0.5;
@@ -91,7 +91,7 @@ matlabbatch{1}.spm.tools.physio.verbose.fig_output_file = 'physio_verbose';
 matlabbatch{1}.spm.tools.physio.verbose.use_tabs = false;
 
 % save and run batch 
-save([outdir filesep 'create_physio'], 'matlabbatch')
+save([outdir filesep 'create_physio_batch'], 'matlabbatch')
 spm_jobman('run', matlabbatch)
 
 end
