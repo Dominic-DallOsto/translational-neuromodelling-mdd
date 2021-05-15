@@ -1,7 +1,15 @@
-clear
-% plot and create images of the motion parameter from SPM preprocessing
+function prepro_motionPlots(datasetDir)
 
-dpath = 'C:\Users\sarah\Documents\university\NSC\0_SS21\TNM\project'; % CHECK PATH dir to subject data  
+% Plot and create images of the motion parameters outputed from SPM preprocessing
+% Run after preprocessing to create the plots for all subject. 
+% 
+% Input: 
+%    datasetDir:  path to dir containing all subject data folder
+% 
+
+clear
+
+dpath = datasetDir; 
 cd(dpath)
 subjs = dir([pwd filesep 'sub*']); 
 fpath = 'rsfmri/';                  
@@ -41,3 +49,5 @@ for j = 1:length(subjs)
     clear rp*
     cd(dpath)  
 end
+
+end 

@@ -2,7 +2,7 @@
 
 
 % Y should be in correct format straight from SPM pre-processing
-% U is "switched off" by setting all input parameters to zero
+% U is "switched off" by setting all input parameters to zero (second parameter)
 % No args (third parameter)
 DCM = tapas_rdcm_model_specification(Y, [], []) 
 
