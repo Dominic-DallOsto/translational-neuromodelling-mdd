@@ -9,7 +9,7 @@ function create_timeseries(datasetDir, subID, atlasFile, nameFile)
 %   nameFile:   File containing all the names to the ROI (.txt)
 
 dataDir = fullfile(datasetDir, 'data\', sprintf('sub-%04d', subID)); 
-physio_dir = fullfile(dataDir, 'rsfmri\'); %Specify path to SPM file (GLM output)
+func_dir = fullfile(dataDir, 'rsfmri\'); %Specify path to SPM file (GLM output)
 
 % TODO 
 nMasks = 379;
@@ -22,7 +22,7 @@ for i = 1:nMasks
     % spm SPM - SPM12 (7487)
     % cfg_basicio BasicIO - Unknown
     %-----------------------------------------------------------------------
-    matlabbatch{1}.spm.util.voi.spmmat = {fullfile(physio_dir, 'SPM.mat')};
+    matlabbatch{1}.spm.util.voi.spmmat = {fullfile(func_dir, 'SPM.mat')};
     matlabbatch{1}.spm.util.voi.adjust = 0;
     matlabbatch{1}.spm.util.voi.session = 1;
     matlabbatch{1}.spm.util.voi.name = masksNames(i);
