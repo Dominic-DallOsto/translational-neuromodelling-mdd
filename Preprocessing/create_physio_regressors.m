@@ -91,7 +91,7 @@ matlabbatch{1}.spm.tools.physio.verbose.fig_output_file = 'physio_verbose';
 matlabbatch{1}.spm.tools.physio.verbose.use_tabs = false;
 
 % save and run batch 
-save([outdir filesep 'create_physio'], 'matlabbatch')
+save([outdir filesep 'create_physio_batch'], 'matlabbatch')
 spm_jobman('run', matlabbatch)
 
 end
