@@ -10,11 +10,6 @@ function create_timeseries(datasetDir, subID, atlasFile, nameFile)
 
 dataDir = fullfile(datasetDir, 'data\', sprintf('sub-%04d', subID)); 
 physio_dir = fullfile(dataDir, 'rsfmri\'); %Specify path to SPM file (GLM output)
-outdir = [dataDir filesep 'timeseries_output'];
-if ~exist(outdir, 'dir')
-    mkdir(outdir);
-end
-cd(outdir);
 
 % TODO 
 nMasks = 379;
