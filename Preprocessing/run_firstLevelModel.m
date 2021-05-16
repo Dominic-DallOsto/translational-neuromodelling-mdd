@@ -29,7 +29,7 @@ physio_dir = fullfile(dataDir, 'physio_output');
 % spm SPM - SPM12 (7487)
 % cfg_basicio BasicIO - Unknown
 %-----------------------------------------------------------------------
-matlabbatch{1}.spm.stats.fmri_spec.dir = {outDir};
+matlabbatch{1}.spm.stats.fmri_spec.dir = {outdir};
 matlabbatch{1}.spm.stats.fmri_spec.timing.units = 'scans';
 matlabbatch{1}.spm.stats.fmri_spec.timing.RT = str2double(scan_properties.TR_s_);
 matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t = str2double(scan_properties.NumberOfSlices);;
