@@ -33,12 +33,11 @@ matlabbatch{NORMALISATION}.spm.spatial.normalise.est.eoptions.samp = 3;
 
 %--------------------------------------------------------------------------
 % Undistort image
-matlabbatch{UNDISTORT}.spm.util.defs.comp{1}.comp{1}.def(1) = cfg_dep('Normalise: Estimate: Deformation (Subj 1)', substruct('.','val', '{}',{NORMALISATION}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('()',{1}, '.','def'));
-matlabbatch{UNDISTORT}.spm.util.defs.out{1}.push.fnames = {fullfile(pwd, file_to_realign)};
+matlabbatch{UNDISTORT}.spm.util.defs.comp{1}.def(1) = cfg_dep('Normalise: Estimate: Deformation (Subj 1)', substruct('.','val', '{}',{NORMALISATION}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('()',{1}, '.','def'));
+matlabbatch{UNDISTORT}.spm.util.defs.out{1}.push.fnames = {fullfile(pwd, file_to_register); fullfile(pwd, file_to_realign)};
 matlabbatch{UNDISTORT}.spm.util.defs.out{1}.push.weight = {''};
 matlabbatch{UNDISTORT}.spm.util.defs.out{1}.push.savedir.savepwd = 1;
-matlabbatch{UNDISTORT}.spm.util.defs.out{1}.push.fov.bbvox.bb = [NaN NaN NaN
-                                                         NaN NaN NaN];
+matlabbatch{UNDISTORT}.spm.util.defs.out{1}.push.fov.bbvox.bb = [-78 -112 -70 ; 78 76 85]; % to match prepro
 matlabbatch{UNDISTORT}.spm.util.defs.out{1}.push.fov.bbvox.vox = [2 2 2];
 matlabbatch{UNDISTORT}.spm.util.defs.out{1}.push.preserve = 2; % for categorical data
 matlabbatch{UNDISTORT}.spm.util.defs.out{1}.push.fwhm = [0 0 0];
