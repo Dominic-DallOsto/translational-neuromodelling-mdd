@@ -35,18 +35,10 @@ matlabbatch{1}.spm.stats.fmri_spec.timing.RT = str2double(scan_properties.TR_s_)
 matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t = str2double(scan_properties.NumberOfSlices);
 matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t0 = (str2double(scan_properties.NumberOfSlices)/2);
 
-% specify scans (new names!)
+% specify smoothed functional scans (check name)
 matlabbatch{1}.spm.stats.fmri_spec.sess.scans = {fullfile(func_dir, 'smooth_norm_fmap_slicecorr_vol.nii')};
 
-% specify condition 
-matlabbatch{1}.spm.stats.fmri_spec.sess.cond.name = 'resting_state';
-matlabbatch{1}.spm.stats.fmri_spec.sess.cond.onset = str2double(scan_properties.Dummy)+1;
-matlabbatch{1}.spm.stats.fmri_spec.sess.cond.duration = str2double(scan_properties.NumberOfVolumes);
-matlabbatch{1}.spm.stats.fmri_spec.sess.cond.tmod = 0;
-matlabbatch{1}.spm.stats.fmri_spec.sess.cond.pmod = struct('name', {}, 'param', {}, 'poly', {});
-matlabbatch{1}.spm.stats.fmri_spec.sess.cond.orth = 1;
-
-% specify additional regressors 
+% specify additional regressors created with PhysIO
 matlabbatch{1}.spm.stats.fmri_spec.sess.multi = {''};
 matlabbatch{1}.spm.stats.fmri_spec.sess.regress = struct('name', {}, 'val', {});
 matlabbatch{1}.spm.stats.fmri_spec.sess.multi_reg = {fullfile(physio_dir, 'multiple_regressors.txt')};
