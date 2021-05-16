@@ -11,7 +11,7 @@ dataDir = fullfile(datasetDir, 'data', sprintf('sub-%04d', subID));
 glm_dir = fullfile(dataDir, 'GLM_output'); %Specify path to SPM file (GLM output)
 
 atlas = spm_vol(atlasFile);
-data = spm_vol(fullfile(dataDir,'rsfmri','smooth_norm_fmap_slicecorr_vol.nii'));
+data = spm_vol(fullfile(glm_dir,'Res.nii'));
 
 atlas_vol = spm_read_vols(atlas);
 data_vols = spm_read_vols(data);
