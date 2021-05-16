@@ -25,7 +25,7 @@ for i = 1:nMasks
     matlabbatch{1}.spm.util.voi.spmmat = {fullfile(func_dir, 'SPM.mat')};
     matlabbatch{1}.spm.util.voi.adjust = 0;
     matlabbatch{1}.spm.util.voi.session = 1;
-    matlabbatch{1}.spm.util.voi.name = masksNames(i);
+    matlabbatch{1}.spm.util.voi.name = maskNames(i);
     matlabbatch{1}.spm.util.voi.roi{1}.label.image = {atlasFile};
     matlabbatch{1}.spm.util.voi.roi{1}.label.list = i;
     matlabbatch{1}.spm.util.voi.expression = 'i1==1';
