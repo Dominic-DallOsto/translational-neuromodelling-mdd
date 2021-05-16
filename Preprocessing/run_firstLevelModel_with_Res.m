@@ -39,6 +39,7 @@ matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t0 = (str2double(scan_properties.
 matlabbatch{1}.spm.stats.fmri_spec.sess.scans = {fullfile(func_dir, 'smooth_norm_fmap_slicecorr_vol.nii')};
 
 % specify additional regressors - physIO output
+matlabbatch{1}.spm.stats.fmri_spec.sess.cond = struct('name', {}, 'onset', {}, 'duration', {}, 'tmod', {}, 'pmod', {}, 'orth', {});
 matlabbatch{1}.spm.stats.fmri_spec.sess.multi = {''};
 matlabbatch{1}.spm.stats.fmri_spec.sess.regress = struct('name', {}, 'val', {});
 matlabbatch{1}.spm.stats.fmri_spec.sess.multi_reg = {fullfile(physio_dir, 'multiple_regressors.txt')};
