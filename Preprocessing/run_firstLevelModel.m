@@ -5,7 +5,7 @@ function run_firstLevelModel(datasetDir, subID)
 dataDir = fullfile(datasetDir, 'data', sprintf('sub-%04d',subID));
 sub_data = get_patient_data(datasetDir, subID);
 scan_properties = get_protocol_data(datasetDir, sub_data.protocol);
-outdir = [dataDir filesep 'GLM_output']
+outdir = [dataDir filesep 'GLM_output'];
 if ~exist(outdir, 'dir')
     mk(outdir);
 end
