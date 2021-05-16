@@ -13,7 +13,7 @@ func_dir = fullfile(dataDir, 'GLM_output\'); %Specify path to SPM file (GLM outp
 
 % TODO 
 nMasks = 379;
-prel_masksNames = fileread(nameFile);
+prel_maskNames = fileread(nameFile);
 maskNames = strsplit(prel_maskNames, '\r\n');
 
 for i = 1:nMasks
