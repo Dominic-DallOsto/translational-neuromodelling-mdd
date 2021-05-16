@@ -5,6 +5,10 @@ function run_firstLevelModel(datasetDir, subID)
 dataDir = fullfile(datasetDir, 'data', sprintf('sub-%04d',subID));
 sub_data = get_patient_data(datasetDir, subID);
 scan_properties = get_protocol_data(datasetDir, sub_data.protocol);
+outdir = [dataDir filesep 'GLM_output']
+if ~exist(outdir, 'dir')
+    mk(outdir);
+end
 
 % Check whether subfolders exist.
 if ~exist(dataDir, 'dir')
@@ -25,7 +29,7 @@ physio_dir = fullfile(dataDir, 'physio_output');
 % spm SPM - SPM12 (7487)
 % cfg_basicio BasicIO - Unknown
 %-----------------------------------------------------------------------
-matlabbatch{1}.spm.stats.fmri_spec.dir = {dataDir};
+matlabbatch{1}.spm.stats.fmri_spec.dir = {outDir};
 matlabbatch{1}.spm.stats.fmri_spec.timing.units = 'scans';
 matlabbatch{1}.spm.stats.fmri_spec.timing.RT = str2double(scan_properties.TR_s_);
 matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t = str2double(scan_properties.NumberOfSlices);;
