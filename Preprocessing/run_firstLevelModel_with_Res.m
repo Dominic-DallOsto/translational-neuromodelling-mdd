@@ -8,6 +8,8 @@ scan_properties = get_protocol_data(datasetDir, sub_data.protocol);
 outdir = [dataDir filesep 'GLM_output'];
 if ~exist(outdir, 'dir')
     mkdir(outdir);
+else 
+    rmdir(outdir, 's');
 end
 
 % Check whether subfolders exist.
@@ -51,14 +53,19 @@ matlabbatch{1}.spm.stats.fmri_spec.global = 'None';
 matlabbatch{1}.spm.stats.fmri_spec.mthresh = 0.8;
 matlabbatch{1}.spm.stats.fmri_spec.mask = {''};
 matlabbatch{1}.spm.stats.fmri_spec.cvi = 'AR(1)';
-matlabbatch{2}.spm.stats.fmri_est.spmmat = cfg_dep('fMRI model specification: SPM.mat File', substruct('.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','spmmat'));
 
 % save residuals 
+matlabbatch{2}.spm.stats.fmri_est.spmmat = cfg_dep('fMRI model specification: SPM.mat File', substruct('.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','spmmat'));
 matlabbatch{2}.spm.stats.fmri_est.write_residuals = 1;
 matlabbatch{2}.spm.stats.fmri_est.method.Classical = 1;
+matlabbatch{3}.spm.util.cat.vols(1) = cfg_dep('Model estimation: Residual Images', substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','res'));
+matlabbatch{3}.spm.util.cat.name = 'Res.nii';
+matlabbatch{3}.spm.util.cat.dtype = 4;
+matlabbatch{3}.spm.util.cat.RT = str2double(scan_properties.TR_s_);
+
 
 % save and run batch 
-save(['firstLevelModel_batch'], 'matlabbatch')
+save(fullfile(outdir, 'firstLevelModel_batch.mat'), 'matlabbatch')
 spm_jobman('run', matlabbatch)
 
 end
