@@ -9,7 +9,7 @@ function create_timeseries(datasetDir, subID, atlasFile, nameFile)
 %   nameFile:   File containing all the names to the ROI (.txt)
 
 dataDir = fullfile(datasetDir, 'data\', sprintf('sub-%04d', subID)); 
-func_dir = fullfile(dataDir, 'rsfmri\GLM_output\'); %Specify path to SPM file (GLM output)
+func_dir = fullfile(dataDir, 'GLM_output\'); %Specify path to SPM file (GLM output)
 
 % TODO 
 nMasks = 379;
