@@ -5,6 +5,10 @@ function run_firstLevelModel(datasetDir, subID)
 dataDir = fullfile(datasetDir, 'data', sprintf('sub-%04d',subID));
 sub_data = get_patient_data(datasetDir, subID);
 scan_properties = get_protocol_data(datasetDir, sub_data.protocol);
+outdir = [dataDir filesep 'GLM_output'];
+if ~exist(outdir, 'dir')
+    mkdir(outdir);
+end
 
 % Check whether subfolders exist.
 if ~exist(dataDir, 'dir')
@@ -25,11 +29,12 @@ physio_dir = fullfile(dataDir, 'physio_output');
 % spm SPM - SPM12 (7487)
 % cfg_basicio BasicIO - Unknown
 %-----------------------------------------------------------------------
-matlabbatch{1}.spm.stats.fmri_spec.dir = {dataDir};
+matlabbatch{1}.spm.stats.fmri_spec.dir = {outdir};
 matlabbatch{1}.spm.stats.fmri_spec.timing.units = 'scans';
 matlabbatch{1}.spm.stats.fmri_spec.timing.RT = str2double(scan_properties.TR_s_);
 matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t = str2double(scan_properties.NumberOfSlices);
 matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t0 = (str2double(scan_properties.NumberOfSlices)/2);
+<<<<<<< HEAD
 
 % specify scans
 matlabbatch{1}.spm.stats.fmri_spec.sess.scans = {fullfile(func_dir, 'smoothednormalisedslicetimingcorrectedvol.nii')};;
@@ -43,6 +48,9 @@ matlabbatch{1}.spm.stats.fmri_spec.sess.cond.pmod = struct('name', {}, 'param', 
 matlabbatch{1}.spm.stats.fmri_spec.sess.cond.orth = 1;
 
 % specify additional regressors 
+=======
+matlabbatch{1}.spm.stats.fmri_spec.sess.scans = {fullfile(func_dir, 'smooth_norm_fmap_slicecorr_vol.nii')};;
+>>>>>>> 3625936d3e8d312060f89c8b7ebce2ffd8c2ee82
 matlabbatch{1}.spm.stats.fmri_spec.sess.cond = struct('name', {}, 'onset', {}, 'duration', {}, 'tmod', {}, 'pmod', {}, 'orth', {});
 matlabbatch{1}.spm.stats.fmri_spec.sess.multi = {''};
 matlabbatch{1}.spm.stats.fmri_spec.sess.regress = struct('name', {}, 'val', {});

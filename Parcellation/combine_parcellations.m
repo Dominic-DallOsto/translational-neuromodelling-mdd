@@ -1,27 +1,29 @@
 %% extract the whitematter / cortex from each atlas
-subcort = spm_vol('D:/labels.nii');
-cort = spm_vol('../../HCPMMP1_on_MNI152_ICBM2009a_nlin.nii');
+subcort = spm_vol('subcortical_atlas.nii');
+cort = spm_vol('Glasser.nii');
 
 subcort_vols = spm_read_vols(subcort);
 cort_vols = spm_read_vols(cort);
 
 subcort_cortex_vols = (subcort_vols == 3) + (subcort_vols == 42);
 subcort_cortex = subcort;
-subcort_cortex.fname='subcort_cortex.nii';
+subcort_cortex.fname='subcortical_atlas_cortex.nii';
 spm_write_vol(subcort_cortex, subcort_cortex_vols);
 
 cort_nonzero_vols = (cort_vols ~= 0);
 cort_nonzero = cort;
-cort_nonzero.fname='cort_nonzero.nii';
+cort_nonzero.fname='Glasser_nonzero.nii';
 spm_write_vol(cort_nonzero, cort_nonzero_vols);
 
 %%
 
 % in the mean time we run the normalisation and pushforward unwarping
+realign_atlas_mask('Glasser_nonzero.nii','Glasser.nii');
+realign_atlas_mask('subcortical_atlas_cortex.nii','subcortical_atlas.nii');
 
 %% now we select which labels we want
-glasser = spm_vol('pf_HCPMMP1_on_MNI152_ICBM2009a_nlin.nii');
-subcortical = spm_vol('pf_labels.nii');
+glasser = spm_vol('pf_Glasser.nii');
+subcortical = spm_vol('pf_subcortical_atlas.nii');
 
 glasser_vols = spm_read_vols(glasser);
 subcortical_vols = spm_read_vols(subcortical);
