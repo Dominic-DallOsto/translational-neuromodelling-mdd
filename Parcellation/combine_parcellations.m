@@ -50,6 +50,10 @@ fprintf('We have %d overlapping voxels :(\n', nnz(crossover));
 combined = subcortical_vols;
 combined(combined ~= 0) = combined(combined ~= 0) + 360;
 combined(glasser_split_vol ~= 0) = glasser_split_vol(glasser_split_vol ~= 0);
+
+% remove NaNs from the mask
+combined(isnan(combined)) = 0;
+
 combined_nii = subcortical;
 combined_nii.fname = 'combined_atlas.nii';
 spm_write_vol(combined_nii, combined);
