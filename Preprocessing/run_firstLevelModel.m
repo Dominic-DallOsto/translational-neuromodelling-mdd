@@ -28,16 +28,26 @@ physio_dir = fullfile(dataDir, 'physio_output');
 matlabbatch{1}.spm.stats.fmri_spec.dir = {dataDir};
 matlabbatch{1}.spm.stats.fmri_spec.timing.units = 'scans';
 matlabbatch{1}.spm.stats.fmri_spec.timing.RT = str2double(scan_properties.TR_s_);
-matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t = str2double(scan_properties.NumberOfSlices);;
+matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t = str2double(scan_properties.NumberOfSlices);
 matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t0 = (str2double(scan_properties.NumberOfSlices)/2);
-%% Check Names
+
+% specify scans
 matlabbatch{1}.spm.stats.fmri_spec.sess.scans = {fullfile(func_dir, 'smoothednormalisedslicetimingcorrectedvol.nii')};;
-%%
+
+% specify condition 
+matlabbatch{1}.spm.stats.fmri_spec.sess.cond.name = 'resting_state';
+matlabbatch{1}.spm.stats.fmri_spec.sess.cond.onset = str2double(scan_properties.Dummy)+1;
+matlabbatch{1}.spm.stats.fmri_spec.sess.cond.duration = str2double(scan_properties.NumberOfVolumes);
+matlabbatch{1}.spm.stats.fmri_spec.sess.cond.tmod = 0;
+matlabbatch{1}.spm.stats.fmri_spec.sess.cond.pmod = struct('name', {}, 'param', {}, 'poly', {});
+matlabbatch{1}.spm.stats.fmri_spec.sess.cond.orth = 1;
+
+% specify additional regressors 
 matlabbatch{1}.spm.stats.fmri_spec.sess.cond = struct('name', {}, 'onset', {}, 'duration', {}, 'tmod', {}, 'pmod', {}, 'orth', {});
 matlabbatch{1}.spm.stats.fmri_spec.sess.multi = {''};
 matlabbatch{1}.spm.stats.fmri_spec.sess.regress = struct('name', {}, 'val', {});
 matlabbatch{1}.spm.stats.fmri_spec.sess.multi_reg = {fullfile(physio_dir, 'multiple_regressors.txt')};
-matlabbatch{1}.spm.stats.fmri_spec.sess.hpf = 128;
+%matlabbatch{1}.spm.stats.fmri_spec.sess.hpf = 128;
 matlabbatch{1}.spm.stats.fmri_spec.fact = struct('name', {}, 'levels', {});
 matlabbatch{1}.spm.stats.fmri_spec.bases.hrf.derivs = [0 0];
 matlabbatch{1}.spm.stats.fmri_spec.volt = 1;
