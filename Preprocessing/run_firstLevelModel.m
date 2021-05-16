@@ -7,7 +7,7 @@ sub_data = get_patient_data(datasetDir, subID);
 scan_properties = get_protocol_data(datasetDir, sub_data.protocol);
 outdir = [dataDir filesep 'GLM_output'];
 if ~exist(outdir, 'dir')
-    mk(outdir);
+    mkdir(outdir);
 end
 
 % Check whether subfolders exist.
