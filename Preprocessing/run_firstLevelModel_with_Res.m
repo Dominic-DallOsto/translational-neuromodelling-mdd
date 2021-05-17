@@ -1,4 +1,4 @@
-function run_firstLevelModel(datasetDir, subID)
+function run_firstLevelModel_with_Res(datasetDir, subID)
 % run first level GLM with the Physio output regressors 
 
 % info   
