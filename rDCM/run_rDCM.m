@@ -1,10 +1,11 @@
-% rdcm()
+function run_rDCM(datasetDir, subID)
 
-
+dataDir = fullfile(datasetDir, 'data', sprintf('sub-%04d',subID))
+data = load(fullfile(dataDir, 'GLM_output', 'extraced_timeseries.mat'));
 % Y should be in correct format straight from SPM pre-processing
 % U is "switched off" by setting all input parameters to zero (second parameter)
 % No args (third parameter)
-DCM = tapas_rdcm_model_specification(struct('y',timeseries,'dt',2.5), [], []);
+DCM = tapas_rdcm_model_specification(struct('y',data.timeseries,'dt',2.5), [], []);
 
 % specify the options for the rDCM analysis - from TAPAS rDCM tutorial
 options.SNR             = 3; % signal-to-noise ratio of synthetic fMRI data (for simulations)
@@ -32,3 +33,9 @@ currentTimer = tic;
 
 % output elapsed time
 toc(currentTimer)
+
+dcm_dir = fullfile(dataDir, 'rDCM');
+if ~exist(dcm_dir, 'dir')
+	mkdir(dcm_dir)
+end
+save(fullfile(dcm_dir, 'dcm_output.mat'), 'output');
