@@ -1,11 +1,11 @@
-function run_rDCM(datasetDir, subID)
+function run_rDCM(datasetDir, subID, TR)
 
 dataDir = fullfile(datasetDir, 'data', sprintf('sub-%04d',subID));
 data = load(fullfile(dataDir, 'GLM_output', 'extracted_timeseries.mat'));
 % Y should be in correct format straight from SPM pre-processing
 % U is "switched off" by setting all input parameters to zero (second parameter)
 % No args (third parameter)
-DCM_input = struct('y',bandpass_filter_data(data.timeseries));
+DCM_input = struct('y',bandpass_filter_data(data.timeseries, 0.01, 0.08, TR));
 DCM = tapas_rdcm_model_specification(DCM_input, [], []);
 
 %% model estimation
