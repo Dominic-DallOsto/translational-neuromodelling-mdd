@@ -3,8 +3,8 @@ function run_prepro_pairs(dataset_dir, index)
 	
 	subject = pairs(index);
 	subject_dir = fullfile(dataset_dir,'data',sprintf('sub-%04d',subject));
-	patient_data = get_patient_data(datasetDir, subject);
-	scan_properties = get_protocol_data(datasetDir, patient_data.protocol);
+	patient_data = get_patient_data(dataset_dir, subject);
+	scan_properties = get_protocol_data(dataset_dir, patient_data.protocol);
 	
 	% Preprocessing
 	if ~exist(fullfile(subject_dir, 'rsfmri', 'smooth_norm_meanfmap_slicecorr_vol.nii'), 'file')
