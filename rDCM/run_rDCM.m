@@ -1,7 +1,7 @@
 function run_rDCM(datasetDir, subID)
 
 dataDir = fullfile(datasetDir, 'data', sprintf('sub-%04d',subID));
-data = load(fullfile(dataDir, 'GLM_output', 'extraced_timeseries.mat'));
+data = load(fullfile(dataDir, 'GLM_output', 'extracted_timeseries.mat'));
 % Y should be in correct format straight from SPM pre-processing
 % U is "switched off" by setting all input parameters to zero (second parameter)
 % No args (third parameter)

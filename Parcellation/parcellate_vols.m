@@ -26,4 +26,4 @@ for label = 1:nlabels
 	timeseries(:,label) = nanmean(reshape(data_vols(repmat(atlas_vol == label, 1,1,1,nvols)), [], nvols), 1);
 end
 
-save(fullfile(glm_dir, 'extraced_timeseries.mat'), 'timeseries');
+save(fullfile(glm_dir, 'extracted_timeseries.mat'), 'timeseries');
