@@ -37,3 +37,10 @@ function run_prepro_pairs(dataset_dir, index)
 		cd ../rDCM
 		run_rDCM(dataset_dir, subject, str2double(scan_properties.TR_s_));
 	end
+	
+	% just save the A matrix to reduce space
+	if ~exist(fullfile(subject_dir, 'rDCM', 'dcm_A.mat'), 'file')
+		data = load(fullfile(subject_dir, 'rDCM', 'dcm_output.mat'));
+		A = data.output.Ep.A;
+		save(fullfile(subject_dir, 'rDCM', 'dcm_A.mat'), 'A');
+	end
