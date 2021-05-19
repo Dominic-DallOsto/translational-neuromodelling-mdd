@@ -15,13 +15,11 @@ cort_nonzero = cort;
 cort_nonzero.fname='Glasser_nonzero.nii';
 spm_write_vol(cort_nonzero, cort_nonzero_vols);
 
-%%
-
-% in the mean time we run the normalisation and pushforward unwarping
+% crop / reslice atlases to match preprocessed data
 realign_atlas_mask('Glasser_nonzero.nii','Glasser.nii');
 realign_atlas_mask('subcortical_atlas_cortex.nii','subcortical_atlas.nii');
 
-%% now we select which labels we want
+%% select which labels we want
 glasser = spm_vol('pf_Glasser.nii');
 subcortical = spm_vol('pf_subcortical_atlas.nii');
 
@@ -46,6 +44,7 @@ glasser_split_vol = [glasser_vols_L; glasser_vols_R+(glasser_vols_R~=0)*180];
 
 crossover = (glasser_vols ~= 0) .* (subcortical_vols ~= 0);
 fprintf('We have %d overlapping voxels :(\n', nnz(crossover));
+fprintf('Overlapping regions: %s (Glasser atlas) and %s (freesurfer subcortical)\n', mat2str(round(unique(glasser_vols(crossover == 1)))), mat2str(round(unique(subcortical_vols(crossover == 1)))));
 
 combined = subcortical_vols;
 combined(combined ~= 0) = combined(combined ~= 0) + 360;
