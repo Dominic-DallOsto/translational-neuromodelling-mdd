@@ -7,12 +7,13 @@ function prepro_motionPlots(datasetDir)
 %    datasetDir:  path to dir containing all subject data folder
 % 
 
-clear
-
+% check paths 
 dpath = datasetDir; 
 cd(dpath)
 subjs = dir([pwd filesep 'sub*']); 
-fpath = 'rsfmri/';                  
+fpath = 'rsfmri/';
+k = 0;
+motion_outliers = {};
 
 for j = 1:length(subjs)
     subName =subjs(j).name;
@@ -24,9 +25,18 @@ for j = 1:length(subjs)
     
     % read in rp file 
     rpfile = dir('rp_*.txt');
+    rp = load(rpfile.name); 
+    
+    % recognize if motion is larger then 1 voxel (2x2x2)
+    max_motion = max(rp, [], 1);
+    min_motion = min(rp, [], 1);
+    
+    if any(max_motion >=2) || any(min_motion <= -2)
+       motion_outliers(k) = cellstr(subName);
+       k = k+1;
+    end
     
     % plot motion parameters
-    rp = load(rpfile.name); 
     scaleme = [-3 3];
     printfig = figure;
     set(printfig, 'Name', ['Motion parameters: subject ' subName], 'Visible', 'on');
@@ -41,8 +51,7 @@ for j = 1:length(subjs)
     ylim(scaleme);   % enable to always scale between fixed values as set above
     title(['Motion parameters: rotations (in dg, pitch roll yaw)'], 'interpreter', 'none');
     mydate = date;  
-    filename = ['motion_sub_' subName '.png'];
-    motname = [ipath filesep 'motion_sub_' sprintf('%02.0f', j) '_' mydate '.png'];
+    filename = ['motion_' subName '.png'];
     print(printfig, '-dpng', '-noui', '-r100', filename);  % enable to print to file
     close(printfig);   % enable to close graphic window
     
@@ -50,4 +59,8 @@ for j = 1:length(subjs)
     cd(dpath)  
 end
 
+% write outliers as txt
+fID = fopen('motion_outliers.txt', 'w');
+fprintf(fID, [cell2mat(motion_outliers)  '\n']);
+    
 end 
