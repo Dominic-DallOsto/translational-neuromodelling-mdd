@@ -10,10 +10,6 @@ function matlabbatch = realign_atlas_mask(file_to_register, file_to_realign)
 % Outputs:
 %       matlabbatch: batch containing information about analysis.
 
-
-% Find out where the Tissue Probability Maps (TPMs) of SPM are located
-% on your computer.
-
 matlabbatch = {};
 
 RESLICE = 1;

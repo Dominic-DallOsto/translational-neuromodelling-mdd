@@ -42,9 +42,9 @@ glasser_vols_L = glasser_vols(1:round(size(glasser_vols,1)/2),:,:);
 glasser_vols_R = glasser_vols(round(1+size(glasser_vols,1)/2):end,:,:);
 glasser_split_vol = [glasser_vols_L; glasser_vols_R+(glasser_vols_R~=0)*180];
 
-crossover = (glasser_vols ~= 0) .* (subcortical_vols ~= 0);
+crossover = (glasser_vols ~= 0) .* (subcortical_vols_copy ~= 0);
 fprintf('We have %d overlapping voxels :(\n', nnz(crossover));
-fprintf('Overlapping regions: %s (Glasser atlas) and %s (freesurfer subcortical)\n', mat2str(round(unique(glasser_vols(crossover == 1)))), mat2str(round(unique(subcortical_vols(crossover == 1)))));
+fprintf('Overlapping regions: %s (Glasser atlas) and %s (freesurfer subcortical)\n', mat2str(round(unique(glasser_vols(crossover == 1)))), mat2str(round(unique(subcortical_vols_copy(crossover == 1)))));
 
 combined = subcortical_vols;
 combined(combined ~= 0) = combined(combined ~= 0) + 360;
