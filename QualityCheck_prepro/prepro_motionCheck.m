@@ -8,9 +8,9 @@ function prepro_motionCheck(dataset_dir)
 
 % data
 data_dir = fullfile(dataset_dir, 'data');
-subjs = dir([data_dir filesep 'sub*']); 
-rp_dir = 'rsfmri/';
-physio_dir = 'physio_output/';
+subjs = dir([data_dir filesep 'sub-*']); 
+rp_dir = 'rsfmri';
+physio_dir = 'physio_output';
 
 for j = 1:length(subjs)   
     % subjects directory containing preprocessing results
@@ -18,10 +18,10 @@ for j = 1:length(subjs)
     rp_path = fullfile(data_dir, subName, rp_dir);
     physio_path = [data_dir filesep subName filesep physio_dir];
     
-    if exist(fullfile(rp_path, 'rp_slicetimingcorrectedvol.txt'), 'file') && exist(fullfile(physio_path, 'multiple_regressors.txt'), 'file')
+    if exist(fullfile(rp_path, 'rp_slicecorr_vol.txt'), 'file') && exist(fullfile(physio_path, 'multiple_regressors.txt'), 'file')
         
         % get realignment parameters from preprocessing
-        rp = load(fullfile(rp_path, 'rp_slicetimingcorrectedvol.txt')); 
+        rp = load(fullfile(rp_path, 'rp_slicecorr_vol.txt')); 
 
         % get physio motion regressors 
         glm_regressors = load(fullfile(physio_path, 'multiple_regressors.txt'));
@@ -30,30 +30,25 @@ for j = 1:length(subjs)
         motion_check.subID = cellstr(subName);
         motion_check.nOutlierRegrs = size(glm_regressors, 2) - 9; 
         motion_check.minParams = min(rp, [], 1);
-        motion_check.meanParams = max(rp, [], 1);
+        motion_check.maxParams = max(rp, [], 1);
         motion_check.meanParams = mean(rp, 1);
 
-        if any(max(rp, [], 1) >=2) || any(min(rp, [], 1) <= -2)
-            motion_check.outlier = 1;
-        else 
-            motion_check.outlier = 0;
-        end
+        motion_check.outlier = any(max(abs(rp), [], 1) >=2);
 
         % plot motion parameters
         scaleme = [-3 3];
-        printfig = figure;
-        set(printfig, 'Name', ['Motion parameters: subject ' subName], 'Visible', 'on');
+        printfig = figure('Name', sprintf('Motion parameters: subject %s', subName), 'visible', 'off');
         subplot(2,1,1);
         plot(rp(:,1:3));
         grid on;
         ylim(scaleme);  % enable to always scale between fixed values as set above
-        title(['Motion parameters: shifts (in mm, XYZ)'], 'interpreter', 'none');
+        title('Motion parameters: shifts (in mm, XYZ)', 'interpreter', 'none');
         subplot(2,1,2);
         plot(rp(:,4:6)*180/pi);
         grid on;
         ylim(scaleme);   % enable to always scale between fixed values as set above
-        title(['Motion parameters: rotations (in dg, pitch roll yaw)'], 'interpreter', 'none'); 
-        filename = ['motion_' subName '.png'];
+        title('Motion parameters: rotations (in dg, pitch roll yaw)', 'interpreter', 'none'); 
+		filename = fullfile(rp_path, sprintf('motion_%s.png', subName));
         print(printfig, '-dpng', '-noui', '-r100', filename);  % enable to print to file
         close(printfig);   % enable to close graphic window
     else
@@ -63,6 +58,6 @@ for j = 1:length(subjs)
 end
 
 % save the motion stats of all subjects 
-save(fullfile(pwd, 'motion_check.mat'), 'motion_check')
+save(fullfile(data_dir, 'motion_check.mat'), 'motion_check');
    
 end 
