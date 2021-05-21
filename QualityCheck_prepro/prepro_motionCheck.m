@@ -12,6 +12,9 @@ subjs = dir([data_dir filesep 'sub-*']);
 rp_dir = 'rsfmri';
 physio_dir = 'physio_output';
 
+subject_index = 0;
+motion_check = struct();
+
 for j = 1:length(subjs)   
     % subjects directory containing preprocessing results
     subName =subjs(j).name;
@@ -19,7 +22,8 @@ for j = 1:length(subjs)
     physio_path = [data_dir filesep subName filesep physio_dir];
     
     if exist(fullfile(rp_path, 'rp_slicecorr_vol.txt'), 'file') && exist(fullfile(physio_path, 'multiple_regressors.txt'), 'file')
-        
+        subject_index = subject_index + 1;
+		
         % get realignment parameters from preprocessing
         rp = load(fullfile(rp_path, 'rp_slicecorr_vol.txt')); 
 
@@ -27,13 +31,12 @@ for j = 1:length(subjs)
         glm_regressors = load(fullfile(physio_path, 'multiple_regressors.txt'));
 
         % create motion info for all subjects 
-        motion_check.subID = cellstr(subName);
-        motion_check.nOutlierRegrs = size(glm_regressors, 2) - 9; 
-        motion_check.minParams = min(rp, [], 1);
-        motion_check.maxParams = max(rp, [], 1);
-        motion_check.meanParams = mean(rp, 1);
-
-        motion_check.outlier = any(max(abs(rp), [], 1) >=2);
+        motion_check(subject_index).subID = cellstr(subName);
+        motion_check(subject_index).nOutlierRegrs = size(glm_regressors, 2) - 9; 
+        motion_check(subject_index).minParams = min(rp, [], 1);
+        motion_check(subject_index).maxParams = max(rp, [], 1);
+        motion_check(subject_index).meanParams = mean(rp, 1);
+        motion_check(subject_index).outlier = any(max(abs(rp), [], 1) >=2);
 
         % plot motion parameters
         scaleme = [-3 3];
@@ -56,6 +59,34 @@ for j = 1:length(subjs)
         
     end
 end
+
+% print motion params for each subject
+printfig = figure('Name', 'Motion parameter stats', 'visible', 'off');
+for motion_param = 1:6
+	subplot(3,2,motion_param);
+	title(sprintf('Motion params %d', motion_param));
+	hold on
+	plot(cellfun(@(params) params(motion_param), {motion_check.minParams}));
+	plot(cellfun(@(params) params(motion_param), {motion_check.maxParams}));
+	plot(cellfun(@(params) params(motion_param), {motion_check.meanParams}));
+	hold off
+end
+subplot(3,2,1)
+legend('min','max','mean')
+subplot(3,2,5)
+xlabel('subject number')
+subplot(3,2,6)
+xlabel('subject number')
+print(printfig, '-dpng', '-noui', '-r100', fullfile(data_dir, 'motion_regressor_stats.png'));
+close(printfig);
+
+% print number of outlier regressors for each subject
+printfig = figure('Name', 'Regressor outliers', 'visible', 'off');
+plot([motion_check.nOutlierRegrs]);
+title('Number of regressor outliers');
+xlabel('subject number')
+print(printfig, '-dpng', '-noui', '-r100', fullfile(data_dir, 'regressor_outliers.png'));
+close(printfig);
 
 % save the motion stats of all subjects 
 save(fullfile(data_dir, 'motion_check.mat'), 'motion_check');
