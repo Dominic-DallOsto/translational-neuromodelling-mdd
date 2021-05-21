@@ -1,4 +1,4 @@
-function prepro_motionCheck(dataset_dir)
+function motion_check = prepro_motionCheck(dataset_dir)
 % Plot and create images of the motion parameters outputed from SPM preprocessing
 % Run after preprocessing to create the plots for all subject. 
 % 
@@ -36,7 +36,7 @@ for j = 1:length(subjs)
         motion_check(subject_index).minParams = min(rp, [], 1);
         motion_check(subject_index).maxParams = max(rp, [], 1);
         motion_check(subject_index).meanParams = mean(rp, 1);
-        motion_check(subject_index).outlier = any(max(abs(rp), [], 1) >=2);
+        motion_check(subject_index).outlier = any(max(abs(rp), [], 1) >=2) || motion_check(subject_index).nOutlierRegrs > 100;
 
         % plot motion parameters
         scaleme = [-3 3];
