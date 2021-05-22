@@ -54,9 +54,6 @@ for j = 1:length(subjs)
 		filename = fullfile(rp_path, sprintf('motion_%s.png', subName));
         print(printfig, '-dpng', '-noui', '-r100', filename);  % enable to print to file
         close(printfig);   % enable to close graphic window
-    else
-        motion_check.subID = cellstr(subName);
-        
     end
 end
 
