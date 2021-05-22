@@ -1,6 +1,5 @@
-function proportion_intersection = check_GLM_mask_alignment(dataset_dir)
+function proportion_intersection = check_GLM_mask_alignment(data_dir)
 
-data_dir = fullfile(dataset_dir, 'data');
 subjects = dir([data_dir filesep 'sub-*']); 
 
 masks = zeros(79,95,79,length(subjects));

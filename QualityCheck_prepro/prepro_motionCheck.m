@@ -1,13 +1,12 @@
-function motion_check = prepro_motionCheck(dataset_dir)
+function motion_check = prepro_motionCheck(data_dir)
 % Plot and create images of the motion parameters outputed from SPM preprocessing
 % Run after preprocessing to create the plots for all subject. 
 % 
 % Input: 
-%    datasetDir:  path to dir containing all subject data folder
+%    dataDir:  path to data folder in dataset
 % 
 
 % data
-data_dir = fullfile(dataset_dir, 'data');
 subjs = dir([data_dir filesep 'sub-*']); 
 rp_dir = 'rsfmri';
 physio_dir = 'physio_output';
