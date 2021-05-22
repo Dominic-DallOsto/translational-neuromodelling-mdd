@@ -60,15 +60,17 @@ for j = 1:length(subjs)
     end
 end
 
+subj_numbers = cellfun(@(subid) str2double(subid(end-3:end)), {subjs.name});
+
 % print motion params for each subject
 printfig = figure('Name', 'Motion parameter stats', 'visible', 'off');
 for motion_param = 1:6
 	subplot(3,2,motion_param);
 	title(sprintf('Motion params %d', motion_param));
 	hold on
-	plot(cellfun(@(params) params(motion_param), {motion_check.minParams}));
-	plot(cellfun(@(params) params(motion_param), {motion_check.maxParams}));
-	plot(cellfun(@(params) params(motion_param), {motion_check.meanParams}));
+	plot(subj_numbers, cellfun(@(params) params(motion_param), {motion_check.minParams}), 'o--');
+	plot(subj_numbers, cellfun(@(params) params(motion_param), {motion_check.maxParams}), 'o--');
+	plot(subj_numbers, cellfun(@(params) params(motion_param), {motion_check.meanParams}), 'o--');
 	hold off
 end
 subplot(3,2,1)
@@ -82,7 +84,7 @@ close(printfig);
 
 % print number of outlier regressors for each subject
 printfig = figure('Name', 'Regressor outliers', 'visible', 'off');
-plot([motion_check.nOutlierRegrs]);
+plot(subj_numbers, [motion_check.nOutlierRegrs], '.');
 title('Number of regressor outliers');
 xlabel('subject number')
 print(printfig, '-dpng', '-noui', '-r100', fullfile(data_dir, 'regressor_outliers.png'));

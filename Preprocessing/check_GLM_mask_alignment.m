@@ -1,28 +1,36 @@
-pairs = read_pairs_text_file('../Dataset Analysis/COI_perfectpair_pairs.txt');
-data_dir = '../SRPBS_OPEN/data';
+function proportion_intersection = check_GLM_mask_alignment(dataset_dir)
 
-pairs = [1,491];
+data_dir = fullfile(dataset_dir, 'data');
+subjects = dir([data_dir filesep 'sub-*']); 
 
-masks = zeros(79,95,79,length(pairs));
+masks = zeros(79,95,79,length(subjects));
 
-for p=1:length(pairs)
-	mask_vol = spm_read_vols(spm_vol(fullfile(data_dir, sprintf('sub-%04d',pairs(p)), 'GLM_output', 'mask.nii')));
+for p=1:length(subjects)
+	mask_vol = spm_read_vols(spm_vol(fullfile(data_dir, subjects(p).name, 'GLM_output', 'mask.nii')));
 	masks(:,:,:,p) = mask_vol;
 end
 
 masksAND = all(masks == 1, 4);
 masksOR = any(masks == 1, 4);
 
-proportion_intersection = zeros(length(pairs),2);
-for p=1:length(pairs)
-	proportion_intersection(p,1) = pairs(p);
+proportion_intersection = zeros(length(subjects),2);
+for p=1:length(subjects)
+	proportion_intersection(p,1) = str2double(subjects(p).name(end-3:end));
 	proportion_intersection(p,2) = nnz(masks(:,:,:,p) .* masksAND) / nnz(masks(:,:,:,p));
 end
+
+% print proportion of intersection for each subject
+printfig = figure('Name', 'Proportion intersection', 'visible', 'off');
+plot(proportion_intersection(:,1), proportion_intersection(:,2), '.');
+title('Proportion of GLM mask intersection for each subject');
+xlabel('subject number')
+print(printfig, '-dpng', '-noui', '-r100', fullfile(data_dir, 'proportion_intersection.png'));
+close(printfig);
 
 tpm_vol = spm_read_vols(spm_vol('pf_TPM.nii'));
 atlas_vol = spm_read_vols(spm_vol('../Parcellation/combined_atlas.nii'));
 
-vol = spm_vol(fullfile(data_dir, sprintf('sub-%04d',pairs(1)), 'GLM_output', 'mask.nii'));
+vol = spm_vol(fullfile(data_dir, subjects(1).name, 'GLM_output', 'mask.nii'));
 vol.fname = fullfile(data_dir, 'maskAND.nii');
 spm_write_vol(vol, masksAND);
 vol.fname = fullfile(data_dir, 'maskOR.nii');
