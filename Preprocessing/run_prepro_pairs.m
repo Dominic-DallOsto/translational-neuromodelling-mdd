@@ -1,5 +1,5 @@
 function run_prepro_pairs(dataset_dir, index)
-	pairs = read_pairs_text_file('../Dataset Analysis/COI_perfectpair_pairs.txt');
+	pairs = read_pairs_text_file('../Dataset Analysis/COI_perfect_pairs.txt');
 	
 	subject = pairs(index);
 	subject_dir = fullfile(dataset_dir,'data',sprintf('sub-%04d',subject));

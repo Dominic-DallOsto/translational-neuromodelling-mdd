@@ -1,4 +1,4 @@
-pairs = read_pairs_text_file('../Dataset Analysis/COI_perfectpair_pairs.txt');
+pairs = read_pairs_text_file('../Dataset Analysis/COI_perfect_pairs.txt');
 Amat_dir = '../SRPBS_OPEN/data';
 
 As = zeros(379*379,80);
