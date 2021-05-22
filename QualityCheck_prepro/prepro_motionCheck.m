@@ -24,7 +24,8 @@ for j = 1:length(subjs)
         subject_index = subject_index + 1;
 		
         % get realignment parameters from preprocessing
-        rp = rad2deg(load(fullfile(rp_path, 'rp_slicecorr_vol.txt')));
+        rp = load(fullfile(rp_path, 'rp_slicecorr_vol.txt'));
+	rp(:,4:6) = rad2deg(rp(:,4:6));
 
         % get physio motion regressors 
         glm_regressors = load(fullfile(physio_path, 'multiple_regressors.txt'));
@@ -35,7 +36,8 @@ for j = 1:length(subjs)
         motion_check(subject_index).minParams = min(rp, [], 1);
         motion_check(subject_index).maxParams = max(rp, [], 1);
         motion_check(subject_index).meanParams = mean(rp, 1);
-        motion_check(subject_index).outlier = any(max(abs(rp), [], 1) >=2) || motion_check(subject_index).nOutlierRegrs > 100;
+	% 3 mm is min voxel size, 2.5 deg is less than 1 voxel over half the number of scans, 1/2 outliers = more outliers than not
+        motion_check(subject_index).outlier = any(max(abs(rp(:,1:3)), [], 1) >=3) || any(max(abs(rp(:,4:6)), [], 1) >=2.5) || motion_check(subject_index).nOutlierRegrs > (size(glm_regressors, 1) / 2);
 
         % plot motion parameters
         scaleme = [-3 3];
