@@ -25,7 +25,7 @@ for j = 1:length(subjs)
         subject_index = subject_index + 1;
 		
         % get realignment parameters from preprocessing
-        rp = load(fullfile(rp_path, 'rp_slicecorr_vol.txt')); 
+        rp = rad2deg(load(fullfile(rp_path, 'rp_slicecorr_vol.txt')));
 
         % get physio motion regressors 
         glm_regressors = load(fullfile(physio_path, 'multiple_regressors.txt'));
@@ -47,7 +47,7 @@ for j = 1:length(subjs)
         ylim(scaleme);  % enable to always scale between fixed values as set above
         title('Motion parameters: shifts (in mm, XYZ)', 'interpreter', 'none');
         subplot(2,1,2);
-        plot(rp(:,4:6)*180/pi);
+        plot(rp(:,4:6));
         grid on;
         ylim(scaleme);   % enable to always scale between fixed values as set above
         title('Motion parameters: rotations (in dg, pitch roll yaw)', 'interpreter', 'none'); 
