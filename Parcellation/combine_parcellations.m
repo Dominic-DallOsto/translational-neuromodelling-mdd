@@ -26,13 +26,20 @@ subcortical = spm_vol('pf_subcortical_atlas.nii');
 glasser_vols = round(spm_read_vols(glasser));
 subcortical_vols = round(spm_read_vols(subcortical));
 
-subcortical_labels_to_remove = [2,3,4,5,7,8,14,15,24,41,42,43,44,46,47,85];
+subcortical_labels_to_remove = [2,3,4,5,7,8,14,15,24,30,41,42,43,44,46,47,62,77,85];
 subcortical_labels_to_remove = [subcortical_labels_to_remove, 17, 53]; % hippocampus is in glasser - remove from Fischl
+order_of_subcortical_labels = [10,11,12,13,18,26,28,31,49,50,51,52,54,58,60,63,16];
+
+if length([subcortical_labels_to_remove,order_of_subcortical_labels]) ~= nnz(unique(subcortical_vols))
+	unique_subcort_labels = unique(subcortical_vols);
+	leftover_labels = unique_subcort_labels(~ismember(unique_subcort_labels, [subcortical_labels_to_remove,order_of_subcortical_labels]));
+	error("Error: label(s) %s in the subcortical mask aren't accounted for", mat2str(nonzeros(leftover_labels)));
+end
+
 for i=1:length(subcortical_labels_to_remove)
 	subcortical_vols(subcortical_vols == subcortical_labels_to_remove(i)) = 0;
 end
 
-order_of_subcortical_labels = [10,11,12,13,18,26,28,31,49,50,51,52,54,58,60,63,16];
 subcortical_vols_copy = subcortical_vols;
 for i=1:length(order_of_subcortical_labels)
 	subcortical_vols(subcortical_vols_copy == order_of_subcortical_labels(i)) = i;
