@@ -62,8 +62,10 @@ SMOOTHING = 9;
 WRITE_STRUCTURAL = 10;
 
 scans = spm_select('FPList',func_dir,'^vol_.+');
-dummy_vols = str2double(scan_properties.Dummy); % retrieve the number of dummy volumes
-scans = scans(dummy_vols+1:end,:); % remove the dummy volumes
+normal_vols = str2double(scan_properties.NumberOfVolumes); % retrieve the number of volumes
+if len(scans) ~= normal_vols
+	scans = scans(end-normal_vols:end, :); % if dummy volume are in data, only keep last volumes
+end
 
 %--------------------------------------------------------------------------
 % Convert individual scans to a single 4D file (just a bit nicer)
