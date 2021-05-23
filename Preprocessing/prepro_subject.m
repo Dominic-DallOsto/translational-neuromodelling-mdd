@@ -62,9 +62,11 @@ SMOOTHING = 9;
 WRITE_STRUCTURAL = 10;
 
 scans = spm_select('FPList',func_dir,'^vol_.+');
-normal_vols = str2double(scan_properties.NumberOfVolumes); % retrieve the number of volumes
-if len(scans) ~= normal_vols
-	scans = scans(end-normal_vols:end, :); % if dummy volume are in data, only keep last volumes
+total_vols = str2double(scan_properties.NumberOfVolumes); % retrieve the number of volumes
+dummy_vols = str2double(scan_properties.Dummy); % retrieve the number of dummy volumes
+normal_vols = total_vols - dummy_vols;
+if size(scans,1) ~= normal_vols
+	scans = scans(end-normal_vols+1:end, :); % if dummy volumes are in data, only keep last volumes
 end
 
 %--------------------------------------------------------------------------
