@@ -36,9 +36,11 @@ function preprocessing_pipeline(dataset_dir, subject, steps_to_run)
 		run_rDCM(dataset_dir, subject, str2double(scan_properties.TR_s_));
 	end
 	
-	% just save the A matrix to reduce space
-	if any(find(steps_to_run == 5)) || (isempty(steps_to_run) && ~exist(fullfile(subject_dir, 'rDCM', 'dcm_A.mat'), 'file'))
+	% reorder A matrix and save it separately to reduce space
+	if any(find(steps_to_run == 6)) || (isempty(steps_to_run) && ~exist(fullfile(subject_dir, 'rDCM', 'dcm_A.mat'), 'file'))
 		data = load(fullfile(subject_dir, 'rDCM', 'dcm_output.mat'));
 		A = data.output.Ep.A;
+		cd ../Parcellation/
+		A = reorder_A_matrix(A);
 		save(fullfile(subject_dir, 'rDCM', 'dcm_A.mat'), 'A');
 	end
