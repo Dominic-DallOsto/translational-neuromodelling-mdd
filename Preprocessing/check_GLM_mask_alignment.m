@@ -1,6 +1,12 @@
-function proportion_intersection = check_GLM_mask_alignment(data_dir)
+function proportion_intersection = check_GLM_mask_alignment(data_dir, outliers)
 
-subjects = dir([data_dir filesep 'sub-*']); 
+if nargin < 2
+	outliers = [];
+end
+
+subjects = dir([data_dir filesep 'sub-*']);
+subject_ids = cellfun(@(n) str2double(n(end-3:end)), {subjects.name});
+subjects = subjects(~ismember(subject_ids, outliers)); % remove outliers
 
 masks = zeros(79,95,79,length(subjects));
 
