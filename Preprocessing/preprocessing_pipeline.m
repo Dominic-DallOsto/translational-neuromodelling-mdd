@@ -38,9 +38,17 @@ function preprocessing_pipeline(dataset_dir, subject, steps_to_run)
 	
 	% reorder A matrix and save it separately to reduce space
 	if any(find(steps_to_run == 6)) || (isempty(steps_to_run) && ~exist(fullfile(subject_dir, 'rDCM', 'dcm_A.mat'), 'file'))
+		fprintf('Reordering and saving rDCM A matrix for subject %d.\n', subject);
 		data = load(fullfile(subject_dir, 'rDCM', 'dcm_output.mat'));
 		A = data.output.Ep.A;
 		cd ../Parcellation/
 		A = reorder_A_matrix(A);
 		save(fullfile(subject_dir, 'rDCM', 'dcm_A.mat'), 'A');
+	end
+
+	% get correlation values for each pair of timeseries
+	if any(find(steps_to_run == 7)) || (isempty(steps_to_run) && ~exist(fullfile(subject_dir, 'correlation', 'correlation_components.mat'), 'file'))
+		fprintf('Saving correlation coefficient matrix lower diagonal for subject %d.\n', subject);
+		cd ../rDCM
+		timeseries_correlation(dataset_dir, subject);
 	end

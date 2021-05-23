@@ -4,7 +4,7 @@ function [data] = read_array_text_file(filename, type)
 	end
 
 	f = fopen(filename);
-	fread(f,1) % ignore the leading [
+	fread(f,1); % ignore the leading [
 	data = textscan(f, type, 'delimiter', ',');
 	data = data{1};
 	fclose(f);
