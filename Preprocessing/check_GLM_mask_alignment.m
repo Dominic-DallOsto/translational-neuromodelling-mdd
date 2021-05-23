@@ -42,9 +42,9 @@ vol.fname = fullfile(data_dir, 'maskOR.nii');
 spm_write_vol(vol, masksOR);
 vol.fname = fullfile(data_dir, 'maskAND_missing.nii');
 spm_write_vol(vol, tpm_vol(:,:,:,1) .* ~masksAND);
-vol.fname = fullfile(data_dir, 'maskOR_missing.nii');
+vol.fname = fullfile(data_dir, 'maskOR_missing_tpm.nii');
 spm_write_vol(vol, tpm_vol(:,:,:,1) .* ~masksOR);
-vol.fname = fullfile(data_dir, 'maskAND_missing_atlased.nii');
-spm_write_vol(vol, atlas_vol .*(tpm_vol(:,:,:,1) .* ~masksAND));
+vol.fname = fullfile(data_dir, 'maskAND_missing_atlas.nii');
+spm_write_vol(vol, atlas_vol .* ~masksAND);
 
 save(fullfile(data_dir, 'proportion_intersection.mat'), 'proportion_intersection');
