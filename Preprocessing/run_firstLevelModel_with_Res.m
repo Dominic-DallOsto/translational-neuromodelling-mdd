@@ -10,7 +10,7 @@ if ~exist(outdir, 'dir')
     mkdir(outdir);
 else 
     rmdir(outdir, 's');
-    mkfir(outdir);
+    mkdir(outdir);
 end
 
 % Check whether subfolders exist.
