@@ -20,7 +20,7 @@ function run_quality_check(data_dir)
 	
 	cd ../Preprocessing/
 	proportion_intersection = check_GLM_mask_alignment(data_dir, outliers);
-	normalisation_outliers = proportion_intersection(:,2) < 0.7;
+	normalisation_outliers = proportion_intersection(:,2) < 0.6;
 	normalisation_outlier_numbers_string = join(arrayfun(@(n) num2str(n), proportion_intersection(normalisation_outliers,1), 'UniformOutput', false), ', ');
 	if nnz(normalisation_outliers) > 0
 		normalisation_outlier_numbers_string = normalisation_outlier_numbers_string{1};
