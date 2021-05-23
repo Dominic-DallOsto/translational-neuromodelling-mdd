@@ -43,7 +43,7 @@ function preprocessing_pipeline(dataset_dir, subject, steps_to_run)
 		A = data.output.Ep.A;
 		cd ../Parcellation/
 		A = reorder_A_matrix(A);
-		save(fullfile(subject_dir, 'rDCM', 'dcm_A.mat'), 'A');
+		save(fullfile(subject_dir, 'rDCM', sprintf('dcm_A_%04d.mat', subject)), 'A');
 	end
 
 	% get correlation values for each pair of timeseries
