@@ -172,6 +172,12 @@ if field_map_correcting
 	matlabbatch{APPLY_FIELD_MAP}.spm.tools.fieldmap.applyvdm.roptions.wrap = [0 0 0];
 	matlabbatch{APPLY_FIELD_MAP}.spm.tools.fieldmap.applyvdm.roptions.mask = 1;
 	matlabbatch{APPLY_FIELD_MAP}.spm.tools.fieldmap.applyvdm.roptions.prefix = 'fmap_';
+else
+	NORMALISATION = NORMALISATION - 2;
+	COREGISTRATION = COREGISTRATION - 2;
+	WRITE_FUNCTIONAL = WRITE_FUNCTIONAL - 2;
+	SMOOTHING = SMOOTHING - 2;
+	WRITE_STRUCTURAL = WRITE_STRUCTURAL - 2;
 end
 
 %--------------------------------------------------------------------------
@@ -258,12 +264,6 @@ matlabbatch{WRITE_STRUCTURAL}.spm.spatial.normalise.write.woptions.vox = [1 1 1]
 matlabbatch{WRITE_STRUCTURAL}.spm.spatial.normalise.write.woptions.interp = 4;
 matlabbatch{WRITE_STRUCTURAL}.spm.spatial.normalise.write.woptions.prefix = 'norm_';
 %--------------------------------------------------------------------------
-
-if ~field_map_correcting
-	% remove field map correction parts from batch
-	matlabbatch(APPLY_FIELD_MAP) = [];
-	matlabbatch(GET_FIELD_MAP) = [];
-end
 
 if run == 2
     spm_jobman('initcfg');
