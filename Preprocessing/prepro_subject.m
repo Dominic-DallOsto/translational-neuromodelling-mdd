@@ -39,8 +39,10 @@ if ~exist(func_dir, 'dir')
     error('Could not find rsfmri/ subfolder');
 end
 fmap_dir = fullfile(dataDir, 'fmap');
+field_map_correcting = true;
 if ~exist(fmap_dir, 'dir')
-    error('Could not find fmap/ subfolder');
+	fprintf("Couldn't find fmap/ subfolder - skipping field map correction...");
+	field_map_correcting = false;
 end
 
 % Find out where the Tissue Probability Maps (TPMs) of SPM are located
@@ -117,19 +119,20 @@ matlabbatch{REALIGN}.spm.spatial.realign.estwrite.roptions.prefix = 'realign_';
 
 %--------------------------------------------------------------------------
 % Field map correction
-field_map_correcting = true;
-if exist(fullfile(fmap_dir, 'phase.nii'),'file')
-	field_map_phase = fullfile(fmap_dir, 'phase.nii');
-	field_map_magn = fullfile(fmap_dir, 'data_0000.nii');
-elseif ~isempty(dir(fullfile(fmap_dir, '^fieldmaps*')))
-	field_map_phase = spm_select('FPList',fmap_dir,'^fieldmaps.*[^_]..nii$');
-	field_map_magn = spm_select('FPList',fmap_dir,'^fieldmaps.*_1.nii$');
-elseif ~isempty(dir(fullfile(fmap_dir, '^fm*')))
-	field_map_phase = spm_select('FPList',fmap_dir,'^fm[0-9][0-9].nii$');
-	field_map_magn = spm_select('FPList',fmap_dir,'^fm.*_01.nii$');
-else
-	fprintf("Couldn't find field map files - skipping field map correction...");
-	field_map_correcting = false;
+if field_map_correcting
+	if exist(fullfile(fmap_dir, 'phase.nii'),'file')
+		field_map_phase = fullfile(fmap_dir, 'phase.nii');
+		field_map_magn = fullfile(fmap_dir, 'data_0000.nii');
+	elseif ~isempty(dir(fullfile(fmap_dir, '^fieldmaps*')))
+		field_map_phase = spm_select('FPList',fmap_dir,'^fieldmaps.*[^_]..nii$');
+		field_map_magn = spm_select('FPList',fmap_dir,'^fieldmaps.*_1.nii$');
+	elseif ~isempty(dir(fullfile(fmap_dir, '^fm*')))
+		field_map_phase = spm_select('FPList',fmap_dir,'^fm[0-9][0-9].nii$');
+		field_map_magn = spm_select('FPList',fmap_dir,'^fm.*_01.nii$');
+	else
+		fprintf("Couldn't find field map files - skipping field map correction...");
+		field_map_correcting = false;
+	end
 end
 if field_map_correcting
 	%--------------------------------------------------------------------------
