@@ -271,4 +271,13 @@ if run == 2
 elseif run == 1
     spm_jobman('initcfg');
     spm_jobman('run',matlabbatch);
+	
+	if ~field_map_correcting
+		% rename the files so they can be found by the next preprocessing steps
+		movefile(fullfile(func_dir, 'norm_slicecorr_vol.nii'), fullfile(func_dir, 'norm_fmap_slicecorr_vol.nii'))
+		movefile(fullfile(func_dir, 'norm_meanslicecorr_vol.nii'), fullfile(func_dir, 'norm_meanfmap_slicecorr_vol.nii'))
+		movefile(fullfile(func_dir, 'smooth_norm_slicecorr_vol.nii'), fullfile(func_dir, 'smooth_norm_fmap_slicecorr_vol.nii'))
+		movefile(fullfile(func_dir, 'smooth_norm_meanslicecorr_vol.nii'), fullfile(func_dir, 'smooth_norm_meanfmap_slicecorr_vol.nii'))
+	end
 end
+
