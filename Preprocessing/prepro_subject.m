@@ -98,7 +98,7 @@ elseif strcmp(strip(scan_properties.SliceAcquisitionOrder), 'Ascending (Interlea
 else
 	throw(MLException('DataPreProcessing:GetSliceAcquisitionOrder',sprintf('Slice Acquisition Order %s not recognised.',scan_properties.SliceAcquisitionOrder)))
 end
-matlabbatch{SLICE_TIMING}.spm.temporal.st.refslice = numberSlices/2; % we normally use the middle slice as the reference
+matlabbatch{SLICE_TIMING}.spm.temporal.st.refslice = round(numberSlices/2); % we normally use the middle slice as the reference
 matlabbatch{SLICE_TIMING}.spm.temporal.st.prefix = 'slicecorr_';
 
 %--------------------------------------------------------------------------
