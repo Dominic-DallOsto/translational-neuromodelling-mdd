@@ -217,10 +217,12 @@ matlabbatch{NORMALISATION}.spm.spatial.preproc.warp.write = [1 1];
 matlabbatch{COREGISTRATION}.spm.spatial.coreg.estimate.ref(1) = cfg_dep('Segment: Bias Corrected (1)', substruct('.','val', '{}',{NORMALISATION}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','channel', '()',{1}, '.','biascorr', '()',{':'}));
 if field_map_correcting
 	matlabbatch{COREGISTRATION}.spm.spatial.coreg.estimate.source(1) = cfg_dep('Apply VDM : Mean Image', substruct('.','val', '{}',{APPLY_FIELD_MAP}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','rmean'));
+	matlabbatch{COREGISTRATION}.spm.spatial.coreg.estimate.other(1) = {fullfile(func_dir, 'fmap_slicecorr_vol.nii')}; % using this as a dependency causes an error
 else
 	matlabbatch{COREGISTRATION}.spm.spatial.coreg.estimate.source(1) = cfg_dep('Realign: Estimate & Reslice: Mean Image', substruct('.','val', '{}',{REALIGN}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','rmean'));
+	matlabbatch{COREGISTRATION}.spm.spatial.coreg.estimate.other(1) = {fullfile(func_dir, 'slicecorr_vol.nii')};
 end
-matlabbatch{COREGISTRATION}.spm.spatial.coreg.estimate.other(1) = {fullfile(func_dir, 'fmap_slicecorr_vol.nii')}; % using this as a dependency causes an error
+
 matlabbatch{COREGISTRATION}.spm.spatial.coreg.estimate.eoptions.cost_fun = 'nmi';
 matlabbatch{COREGISTRATION}.spm.spatial.coreg.estimate.eoptions.sep = [4 2];
 matlabbatch{COREGISTRATION}.spm.spatial.coreg.estimate.eoptions.tol = [0.02 0.02 0.02 0.001 0.001 0.001 0.01 0.01 0.01 0.001 0.001 0.001];
