@@ -16,6 +16,6 @@ Slice gap (mm)	0.8	0	0	0	0.8	0.8	0	0.8	0.8	0.8	0.8	0.8	0.8
 Number of slices	40	32	32	38	40	40	30	40	39	39	39	39	41
 Slice acquisition order	Ascending 	Ascending (Interleaved )	Ascending (Interleaved )	Ascending (Interleaved )	Ascending	Ascending 	Ascending (interleave)	Ascending	Ascending 	Ascending 	Ascending 	Ascending 	Ascending
 Number of volumes	244	150	150	112	244	244	182	244	244	244	244	244	244
-Dummy	4	7	7	5	4	4	0	4	4	4	4	4	4
+Dummy	4	7	7	5	4	4	5	4	4	4	4	4	4
 Total scan time 	10min 17s	4 min. 46s. + 14s (dummy)	4 min. 46s. + 14s (dummy)	4 min. 49s. + 14s (dummy)	10 min + 10s (dummy)	10 min + 10s (dummy)	6 min	10 min + 10s (dummy)	10 min + 10s (dummy)	10 mins + 10 s (dummy)	10 mins+ 10 s (dummy)	10 mins+ 10 s (dummy)	10 min + 10s (dummy)
 Eye closed/fixate	Fixate	Fixate	Fixate	Fixate	Fixate	Fixate	Fixate	Fixate	Fixate	Fixate	Fixate	Fixate	Fixate
