@@ -52,3 +52,5 @@ function preprocessing_pipeline(dataset_dir, subject, steps_to_run)
 		cd ../rDCM
 		timeseries_correlation(dataset_dir, subject);
 	end
+
+	fprintf('Finished Preprocessing Subject %d\n', subject);
