@@ -30,14 +30,14 @@ function preprocessing_pipeline(dataset_dir, subject, steps_to_run)
 	end
 	
 	% rDCM
-	if any(find(steps_to_run == 5)) || (isempty(steps_to_run) && ~exist(fullfile(subject_dir, 'rDCM', 'dcm_output.mat'), 'file') && ~exist(fullfile(subject_dir, 'rDCM', 'dcm_A.mat'), 'file'))
+	if any(find(steps_to_run == 5)) || (isempty(steps_to_run) && ~exist(fullfile(subject_dir, 'rDCM', 'dcm_output.mat'), 'file') && ~exist(fullfile(subject_dir, 'rDCM', sprintf('dcm_A_%04d.mat', subject)), 'file'))
 		fprintf('Running rDCM for subject %d.\n', subject);
 		cd ../rDCM
 		run_rDCM(dataset_dir, subject, str2double(scan_properties.TR_s_));
 	end
 	
 	% reorder A matrix and save it separately to reduce space
-	if any(find(steps_to_run == 6)) || (isempty(steps_to_run) && ~exist(fullfile(subject_dir, 'rDCM', 'dcm_A.mat'), 'file'))
+	if any(find(steps_to_run == 6)) || (isempty(steps_to_run) && ~exist(fullfile(subject_dir, 'rDCM', sprintf('dcm_A_%04d.mat', subject)), 'file'))
 		fprintf('Reordering and saving rDCM A matrix for subject %d.\n', subject);
 		data = load(fullfile(subject_dir, 'rDCM', 'dcm_output.mat'));
 		A = data.output.Ep.A;
@@ -47,10 +47,11 @@ function preprocessing_pipeline(dataset_dir, subject, steps_to_run)
 	end
 
 	% get correlation values for each pair of timeseries
-	if any(find(steps_to_run == 7)) || (isempty(steps_to_run) && ~exist(fullfile(subject_dir, 'correlation', 'correlation_components.mat'), 'file'))
+	if any(find(steps_to_run == 7)) || (isempty(steps_to_run) && ~exist(fullfile(subject_dir, 'correlation', sprintf('correlation_components_%04d.mat', subject)), 'file'))
 		fprintf('Saving correlation coefficient matrix lower diagonal for subject %d.\n', subject);
 		cd ../rDCM
 		timeseries_correlation(dataset_dir, subject);
+		movefile(fullfile(subject_dir, 'correlation', 'correlation_components.mat'), fullfile(subject_dir, 'correlation', sprintf('correlation_components_%04d.mat', subject)))
 	end
 
 	fprintf('Finished Preprocessing Subject %d\n', subject);
