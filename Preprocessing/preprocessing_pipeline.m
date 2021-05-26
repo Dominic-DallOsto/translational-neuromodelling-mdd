@@ -11,13 +11,13 @@ function preprocessing_pipeline(dataset_dir, subject, steps_to_run)
 	end
 	
 	% Physio
-	if any(find(steps_to_run == 2)) || (isempty(steps_to_run) && ~exist(fullfile(subject_dir, 'physio_output'), 'dir'))
+	if any(find(steps_to_run == 2)) || (isempty(steps_to_run) && ~exist(fullfile(subject_dir, 'physio_output', 'multiple_regressors.txt'), 'file'))
 		fprintf('Running physio for subject %d.\n', subject);
 		create_physio_regressors(dataset_dir, subject);
 	end
 	
 	% GLM
-	if any(find(steps_to_run == 3)) || (isempty(steps_to_run) && ~exist(fullfile(subject_dir, 'GLM_output'), 'dir'))
+	if any(find(steps_to_run == 3)) || (isempty(steps_to_run) && ~exist(fullfile(subject_dir, 'GLM_output', 'Res.nii'), 'file'))
 		fprintf('Running GLM for subject %d.\n', subject);
 		run_firstLevelModel_with_Res(dataset_dir, subject);
 	end
@@ -30,7 +30,7 @@ function preprocessing_pipeline(dataset_dir, subject, steps_to_run)
 	end
 	
 	% rDCM
-	if any(find(steps_to_run == 5)) || (isempty(steps_to_run) && ~exist(fullfile(subject_dir, 'rDCM'), 'dir'))
+	if any(find(steps_to_run == 5)) || (isempty(steps_to_run) && ~exist(fullfile(subject_dir, 'rDCM', 'dcm_output.mat'), 'file') && ~exist(fullfile(subject_dir, 'rDCM', 'dcm_A.mat'), 'file'))
 		fprintf('Running rDCM for subject %d.\n', subject);
 		cd ../rDCM
 		run_rDCM(dataset_dir, subject, str2double(scan_properties.TR_s_));
