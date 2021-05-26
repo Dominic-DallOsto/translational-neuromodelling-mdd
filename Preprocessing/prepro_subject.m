@@ -41,7 +41,7 @@ end
 fmap_dir = fullfile(dataDir, 'fmap');
 field_map_correcting = true;
 if ~exist(fmap_dir, 'dir')
-	fprintf("Couldn't find fmap/ subfolder - skipping field map correction...");
+	fprintf("Couldn't find fmap/ subfolder - skipping field map correction...\n");
 	field_map_correcting = false;
 end
 
@@ -82,12 +82,8 @@ matlabbatch{CONVERT_3D_4D}.spm.util.cat.RT = str2double(scan_properties.TR_s_);
 %--------------------------------------------------------------------------
 % Slice timing correction
 matlabbatch{SLICE_TIMING}.spm.temporal.st.scans{1}(1) = cfg_dep('3D to 4D File Conversion: Concatenated 4D Volume', substruct('.','val', '{}',{CONVERT_3D_4D}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','mergedfile'));
-numberSlices = str2double(scan_properties.NumberOfSlices);
-if isnan(numberSlices)
-	throw(MLException('DataPreProcessing:GetNumberSlices',sprintf('Slice Number %s not recognised.',scan_properties.NumberOfSlices)))
-else
-	matlabbatch{SLICE_TIMING}.spm.temporal.st.nslices = numberSlices;
-end
+numberSlices = spm_vol(scans(1,:)).dim(3); % for some patients, number of slices in protocol file doesn't match the volumes
+matlabbatch{SLICE_TIMING}.spm.temporal.st.nslices = numberSlices;
 matlabbatch{SLICE_TIMING}.spm.temporal.st.tr = str2double(scan_properties.TR_s_);
 matlabbatch{SLICE_TIMING}.spm.temporal.st.ta = matlabbatch{SLICE_TIMING}.spm.temporal.st.tr * (1 - 1/numberSlices);
 if strcmp(strip(scan_properties.SliceAcquisitionOrder), 'Ascending')
