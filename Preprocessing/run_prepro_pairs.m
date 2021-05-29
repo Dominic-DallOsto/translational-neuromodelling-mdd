@@ -1,7 +1,7 @@
 function run_prepro_pairs(dataset_dir, pairs_file, index, steps_to_run)
 	pairs = read_pairs_text_file(pairs_file);
 	
-	if nargin < 3
+	if nargin < 4
 		steps_to_run = [];
 	end
 	

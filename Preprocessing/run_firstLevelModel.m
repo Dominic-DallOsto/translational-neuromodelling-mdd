@@ -33,7 +33,7 @@ matlabbatch{1}.spm.stats.fmri_spec.dir = {outdir};
 matlabbatch{1}.spm.stats.fmri_spec.timing.units = 'scans';
 matlabbatch{1}.spm.stats.fmri_spec.timing.RT = str2double(scan_properties.TR_s_);
 matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t = str2double(scan_properties.NumberOfSlices);
-matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t0 = (str2double(scan_properties.NumberOfSlices)/2);
+matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t0 = round(str2double(scan_properties.NumberOfSlices)/2);
 
 % specify smoothed functional scans (check name)
 matlabbatch{1}.spm.stats.fmri_spec.sess.scans = {fullfile(func_dir, 'smooth_norm_fmap_slicecorr_vol.nii')};

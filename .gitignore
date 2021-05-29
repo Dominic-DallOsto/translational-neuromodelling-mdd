@@ -1,5 +1,6 @@
 .vscode
 SRPBS_OPEN
+corrs
 
 # matlab makes these
 *.asv

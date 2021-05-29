@@ -63,3 +63,20 @@ combined(isnan(combined)) = 0;
 combined_nii = subcortical;
 combined_nii.fname = 'combined_atlas.nii';
 spm_write_vol(combined_nii, combined);
+
+%% Make the PAG
+% https://pubmed.ncbi.nlm.nih.gov/28032002/#&gid=article-figures&pid=figure-1-uid-0
+
+PAGs = zeros(size(combined));
+% DL-PAG [0,-32,-8.5] +/- 6,2,2
+% [40.0 41.0 31.8] +/- [3,1,1]
+% [37:43,40:42,31:33]
+PAGs(37:43,40:42,31:33) = 1;
+% VL-PAG [0,-27,-8] +/- 3,1,1
+% [40.0 43.5 32] +/- [1.5,0.5,0.5]
+% [38:42,43,32]
+PAGs(38:42,43,32) = 2;
+
+PAG_nii = combined_nii;
+PAG_nii.fname = 'PAG.nii';
+spm_write_vol(PAG_nii, PAGs);
