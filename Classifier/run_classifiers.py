@@ -49,7 +49,6 @@ def run_classifiers(datasets: List[Tuple[str,np.ndarray,np.ndarray,np.ndarray,np
 		for i, classifier_function in enumerate(classifiers):
 			classifier_name = names[i]
 			print(f"... with {classifier_name} classifier")
-			class_scores = {}
 
 			if classifier_name.endswith('cv'):
 				# Do the cross validation
@@ -57,13 +56,14 @@ def run_classifiers(datasets: List[Tuple[str,np.ndarray,np.ndarray,np.ndarray,np
 				skf = StratifiedKFold(10, shuffle=True, random_state=1)
 
 				# cross validation outer loop
-				for train_index, validation_index in skf.split(X_train, y_train):
+				for outer, (train_index, validation_index) in enumerate(skf.split(X_train, y_train)):
 					X_cv_train = X_train[train_index]
 					y_cv_train = y_train[train_index]
 					X_cv_validation = X_train[validation_index]
 					y_cv_validation = y_train[validation_index]
 
-					print(f'X_CV [{X_cv_train.shape}], y_CV [{y_cv_train.shape}]')
+					print(f'Running outer loop {outer}')
+					# print(f'X_CV [{X_cv_train.shape}], y_CV [{y_cv_train.shape}]')
 					
 					# take 10 subsamples
 					mdd_patients = X_cv_train[y_cv_train == 1]
@@ -78,17 +78,18 @@ def run_classifiers(datasets: List[Tuple[str,np.ndarray,np.ndarray,np.ndarray,np
 						X_subset = np.vstack((mdd_patients,healthy_controls_subsample))
 						y_subset = np.hstack((mdd_labels,healthy_controls_labels_subsample))
 
+						print(f'Running subsample {outer*10+ss}')
 						# print(f'hc_ss [{healthy_controls_subsample.shape}], hc_ss [{healthy_controls_labels_subsample.shape}]')
 						# print(f'mdd_ss [{mdd_patients.shape}], mdd_ss [{mdd_labels.shape}]')
 						# print(f'X_ss [{X_subset.shape}], y_ss [{y_subset.shape}]')
 
 						# kf = KFold(10, shuffle=True, random_state=1)
-						kf = KFold(3, shuffle=True, random_state=1)
+						kf = KFold(10, shuffle=True, random_state=1)
 
 						# alphas = [1e-5,1e-4,1e-3,1e-2,1e-1,1,10]
 						# alphas = [1e-5,1e-4,1e-3,1e-2,1e-1,1]
-						alphas = [0.5,1.0]
-						scores = []
+						alphas = [0.001,0.01,0.1,1.0]
+						alpha_mean_scores = []
 						for alpha in alphas:
 							# tune our alpha values
 							alpha_scores = []
@@ -103,9 +104,9 @@ def run_classifiers(datasets: List[Tuple[str,np.ndarray,np.ndarray,np.ndarray,np
 								score = classifier.score(X_inner_validation, y_inner_validation)
 								# print(f'score = {score}, alpha = {alpha}')
 								alpha_scores.append(score)
-							scores.append(np.mean(np.array(alpha_scores)))
-						best_alpha = alphas[np.argmax(np.array(scores))]
-						print(f'alpha validation scores = {scores}, best alpha = {best_alpha}')
+							alpha_mean_scores.append(np.mean(np.array(alpha_scores)))
+						best_alpha = alphas[np.argmax(np.array(alpha_mean_scores))]
+						print(f'alpha validation scores = {alpha_mean_scores}, best alpha = {best_alpha}')
 
 						# Now we have the best alpha we can train our classifier on this subsample
 						classifier = classifier_function(best_alpha)
@@ -114,8 +115,10 @@ def run_classifiers(datasets: List[Tuple[str,np.ndarray,np.ndarray,np.ndarray,np
 						all_classifiers.append(classifier)
 
 				# Now run the 100 classifiers, and average the results
-				predictions_train = np.mean(np.vstack([classifier.predict(X_train) for classifier in classifiers]), axis=0) > 0.5
-				predictions_test = np.mean(np.vstack([classifier.predict(X_test) for classifier in classifiers]), axis=0) > 0.5
+				print(f'prediction train = {np.mean(np.vstack([classifier.predict(X_train) for classifier in all_classifiers]), axis=0)}')
+				print(f'prediction test = {np.mean(np.vstack([classifier.predict(X_test) for classifier in all_classifiers]), axis=0)}')
+				preds_train = np.mean(np.vstack([classifier.predict(X_train) for classifier in all_classifiers]), axis=0) > 0.5
+				preds_test = np.mean(np.vstack([classifier.predict(X_test) for classifier in all_classifiers]), axis=0) > 0.5
 
 			else:
 				# Train the classifier
