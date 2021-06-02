@@ -14,7 +14,7 @@ be in the following format:
 [dataset3_name, dataset3_X_train, dataset3_X_test, dataset3_y_train, dataset3_y_test]]
 '''
 
-def run_classifiers(datasets: List[Tuple[str,np.ndarray,np.ndarray,np.ndarray,np.ndarray]]):
+def run_classifiers(datasets: List[Tuple[str,np.ndarray,np.ndarray,np.ndarray,np.ndarray]], num_outer=10, num_inner=10):
 	# Used for keys of score dictionary
 	names = ["Lasso_cv"]
 	# names = ["Logistic Regression", "Lasso", "Lasso_cv", "Random Forest"]
@@ -25,7 +25,7 @@ def run_classifiers(datasets: List[Tuple[str,np.ndarray,np.ndarray,np.ndarray,np
 		# lambda : LogisticRegression(random_state=1, max_iter=1000),
 		# lambda : LogisticRegression(penalty='l1', random_state=1, solver='liblinear', max_iter=1000),
 		# lambda hyp: Lasso(alpha=hyp),
-		lambda hyp: LogisticRegression(penalty='l1', C=1/hyp, random_state=1, solver='liblinear', max_iter=1000),
+		lambda hyp: LogisticRegression(penalty='l1', C=1/hyp, random_state=1, solver='liblinear', max_iter=10000),
 		# lambda : RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
 		# lambda : AdaBoostClassifier()
 	]
@@ -53,7 +53,7 @@ def run_classifiers(datasets: List[Tuple[str,np.ndarray,np.ndarray,np.ndarray,np
 			if classifier_name.endswith('cv'):
 				# Do the cross validation
 				all_classifiers = []
-				skf = StratifiedKFold(10, shuffle=True, random_state=1)
+				skf = StratifiedKFold(num_outer, shuffle=True, random_state=1)
 
 				# cross validation outer loop
 				for outer, (train_index, validation_index) in enumerate(skf.split(X_train, y_train)):
@@ -70,7 +70,7 @@ def run_classifiers(datasets: List[Tuple[str,np.ndarray,np.ndarray,np.ndarray,np
 					mdd_labels = y_cv_train[y_cv_train == 1]
 					healthy_controls = X_cv_train[y_cv_train == 0]
 					healthy_controls_labels = y_cv_train[y_cv_train == 0]
-					for ss in range(10):
+					for ss in range(num_inner):
 						# randomly sample subset of healthy controls
 						subsample_indices = np.random.choice(healthy_controls.shape[0], mdd_patients.shape[0])
 						healthy_controls_subsample = healthy_controls[subsample_indices]
