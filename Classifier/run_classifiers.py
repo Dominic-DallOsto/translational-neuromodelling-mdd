@@ -17,7 +17,7 @@ be in the following format:
 
 def run_classifiers(datasets: List[Tuple[str,np.ndarray,np.ndarray,np.ndarray,np.ndarray]], num_outer=10, num_inner=10):
 	# Used for keys of score dictionary
-	names = ["Lasso_cv"]
+	names = ["RandomForest_cv"]
 	#names = ["Lasso_cv", "SVM_cv", "RandomForest_cv"]
 	# names = ["Logistic Regression", "Lasso", "Lasso_cv", "Random Forest"]
 	# names = ["Logistic Regression", "Lasso", "Random Forest", "AdaBoost"]
@@ -27,9 +27,9 @@ def run_classifiers(datasets: List[Tuple[str,np.ndarray,np.ndarray,np.ndarray,np
 		# lambda : LogisticRegression(random_state=1, max_iter=1000),
 		# lambda : LogisticRegression(penalty='l1', random_state=1, solver='liblinear', max_iter=1000),
 		# lambda hyp: Lasso(alpha=hyp),
-		lambda hyp: LogisticRegression(penalty='l1', C=1/hyp, random_state=1, solver='liblinear', max_iter=1000),
+		#lambda hyp: LogisticRegression(penalty='l1', C=1/hyp, random_state=1, solver='liblinear', max_iter=1000),
 		#lambda hyp : SVC(kernel='rbf', C=1/hyp),
-		#lambda hyp : RandomForestClassifier(max_depth=hyp),
+		lambda hyp : RandomForestClassifier(max_depth=hyp),
 		#lambda : RandomForestClassifier(max_depth=5, n_estimators=500),
 		# lambda : AdaBoostClassifier()
 	]
