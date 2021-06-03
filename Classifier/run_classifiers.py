@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import Lasso
+from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from typing import List,Tuple
 from sklearn.metrics import accuracy_score, balanced_accuracy_score, f1_score
@@ -17,6 +18,7 @@ be in the following format:
 def run_classifiers(datasets: List[Tuple[str,np.ndarray,np.ndarray,np.ndarray,np.ndarray]], num_outer=10, num_inner=10):
 	# Used for keys of score dictionary
 	names = ["Lasso_cv"]
+	#names = ["Lasso_cv", "SVM_cv", "RandomForest_cv"]
 	# names = ["Logistic Regression", "Lasso", "Lasso_cv", "Random Forest"]
 	# names = ["Logistic Regression", "Lasso", "Random Forest", "AdaBoost"]
 
@@ -25,8 +27,10 @@ def run_classifiers(datasets: List[Tuple[str,np.ndarray,np.ndarray,np.ndarray,np
 		# lambda : LogisticRegression(random_state=1, max_iter=1000),
 		# lambda : LogisticRegression(penalty='l1', random_state=1, solver='liblinear', max_iter=1000),
 		# lambda hyp: Lasso(alpha=hyp),
-		lambda hyp: LogisticRegression(penalty='l1', C=1/hyp, random_state=1, solver='liblinear', max_iter=10000),
-		# lambda : RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
+		lambda hyp: LogisticRegression(penalty='l1', C=1/hyp, random_state=1, solver='liblinear', max_iter=1000),
+		#lambda hyp : SVC(kernel='rbf', C=1/hyp),
+		#lambda hyp : RandomForestClassifier(max_depth=hyp),
+		#lambda : RandomForestClassifier(max_depth=5, n_estimators=500),
 		# lambda : AdaBoostClassifier()
 	]
 
@@ -53,6 +57,10 @@ def run_classifiers(datasets: List[Tuple[str,np.ndarray,np.ndarray,np.ndarray,np
 			if classifier_name.endswith('cv'):
 				# Do the cross validation
 				all_classifiers = []
+				test_accs = []
+				test_balanced_accs = []
+				test_f1_scores = []
+				test_probs = []
 				skf = StratifiedKFold(num_outer, shuffle=True, random_state=1)
 
 				# cross validation outer loop
@@ -88,7 +96,11 @@ def run_classifiers(datasets: List[Tuple[str,np.ndarray,np.ndarray,np.ndarray,np
 
 						# alphas = [1e-5,1e-4,1e-3,1e-2,1e-1,1,10]
 						# alphas = [1e-5,1e-4,1e-3,1e-2,1e-1,1]
-						alphas = [0.001,0.01,0.1,1.0]
+						
+						if classifier_name == "SVM_cv" or classifier_name == "Lasso_cv":
+							alphas = [0.001,0.01,0.1,1.0]
+						if classifier_name == "RandomForest_cv":
+							alphas = [2, 3, 4, 5]
 						alpha_mean_scores = []
 						for alpha in alphas:
 							# tune our alpha values
@@ -107,18 +119,30 @@ def run_classifiers(datasets: List[Tuple[str,np.ndarray,np.ndarray,np.ndarray,np
 							alpha_mean_scores.append(np.mean(np.array(alpha_scores)))
 						best_alpha = alphas[np.argmax(np.array(alpha_mean_scores))]
 						print(f'alpha validation scores = {alpha_mean_scores}, best alpha = {best_alpha}')
-
+						
 						# Now we have the best alpha we can train our classifier on this subsample
 						classifier = classifier_function(best_alpha)
 						classifier.fit(X_subset, y_subset)
-						# Save this (one of the 100) classifiers
+						preds_prob = np.array(classifier.predict_proba(X_test))[:,1]
+						preds_binary = preds_prob > 0.5
+						acc_score = accuracy_score(preds_binary, y_test)
+						balanced_score = balanced_accuracy_score(preds_binary, y_test)
+						score_f1 = f1_score(preds_binary, y_test)
+						# Save results of (one of the 100) classifiers
+						#print('Acc_Score: ', acc_score)
+						#print('Balanced_Score: ', balanced_score)
+						#print('F1_Score: ', score_f1)
 						all_classifiers.append(classifier)
+						test_accs.append(acc_score)
+						test_balanced_accs.append(balanced_score)
+						test_f1_scores.append(score_f1)
+						test_probs.append(preds_prob)
 
 				# Now run the 100 classifiers, and average the results
-				print(f'prediction train = {np.mean(np.vstack([classifier.predict(X_train) for classifier in all_classifiers]), axis=0)}')
-				print(f'prediction test = {np.mean(np.vstack([classifier.predict(X_test) for classifier in all_classifiers]), axis=0)}')
+				#print(f'prediction train = {np.mean(np.vstack([classifier.predict(X_train) for classifier in all_classifiers]), axis=0)}')
+				#print(f'prediction test = {np.mean(np.vstack([classifier.predict(X_test) for classifier in all_classifiers]), axis=0)}')
 				preds_train = np.mean(np.vstack([classifier.predict(X_train) for classifier in all_classifiers]), axis=0) > 0.5
-				preds_test = np.mean(np.vstack([classifier.predict(X_test) for classifier in all_classifiers]), axis=0) > 0.5
+				preds_test = np.mean(np.vstack(test_probs), axis=0) > 0.5
 
 			else:
 				# Train the classifier
@@ -136,7 +160,11 @@ def run_classifiers(datasets: List[Tuple[str,np.ndarray,np.ndarray,np.ndarray,np
 				f'{classifier_name} Training F1 Score' : f1_score(y_train, preds_train),
 				f'{classifier_name} Testing Accuracy' : accuracy_score(y_test, preds_test),
 				f'{classifier_name} Testing Balanced Accuracy' : balanced_accuracy_score(y_test, preds_test),
-				f'{classifier_name} Testing F1 Score' : f1_score(y_test, preds_test)
+				f'{classifier_name} Testing F1 Score' : f1_score(y_test, preds_test),
+				f'{classifier_name} All Testing Accs' : test_accs,
+				f'{classifier_name} All Testing Balanced Accs' : test_balanced_accs,
+				f'{classifier_name} All Testing F1 Scores' : test_f1_scores,
+				f'{classifier_name} All Probabilities' : test_probs
 			}) 
 
 		scores.update({ds_name : dataset_scores})
